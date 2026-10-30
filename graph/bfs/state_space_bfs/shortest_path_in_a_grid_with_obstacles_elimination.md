@@ -89,3 +89,31 @@ Because you can visit a cell `(r, c)` with different numbers of remaining obstac
 - Standard 2D `visited[r][c]` is insufficient.
 - You need a 3D state: `visited[r][c][eliminations_remaining]` (or store the maximum remaining `k` reached for cell `(r, c)`).
 - A state is uniquely identified by `(row, col, remaining_k)`.
+
+
+
+## Confusion
+Because BFS explores strictly minute-by-minute, if the first path (Path A) that visited that node had already reached the end, **the entire program would have stopped immediately.** The fact that the BFS is still running and allowing a slower second path (Path B) to revisit that node is absolute proof that Path A has not won yet.
+
+There are exactly two things that could have happened to Path A after it left that node:
+
+* **It died (hit a wall):** Path A moved forward but encountered a thick block of obstacles. Because it arrived with a low `k`, it couldn't break through, ran out of valid moves, and its branch of the BFS silently faded away.
+* **It is still wandering:** Path A survived and is still exploring other parts of the grid, but it hasn't found the exit yet.
+
+By letting Path B overwrite the visited state with a higher `k`, the algorithm essentially says, "Path A got here first, but it might fail or get blocked because it is too weak. Let's allow Path B to follow behind it, just in case Path B's extra `k` is needed to blast through a wall that Path A couldn't handle."
+
+
+Let's say Path A reached (5,5) earlier with k = 4. The array recorded visited[5][5] = 4.
+Now, Path B arrives at (5,5) later with k = 2.
+The code checks: Is 2 > 4? No.
+
+Because the condition is false, Path B is not added to the queue. It is instantly deleted.
+
+Why is this mathematically safe?
+Because Path A is strictly better in every way.
+
+Path A is faster: Because BFS explores layer-by-layer, if Path A reached the cell before Path B, Path A took fewer steps.
+
+Path A is stronger: Path A arrived with 4 obstacle breaks, while Path B only has 2.
+
+If Path A is both faster and stronger, there is absolutely zero reason to let Path B continue. Anything Path B could possibly do from this point forward, Path A can do better and faster. Killing Path B immediately prevents the algorithm from doing useless, redundant work.
