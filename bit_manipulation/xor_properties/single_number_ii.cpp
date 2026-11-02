@@ -13,7 +13,9 @@ public:
         return ones;
     }
 
-    // Approach 2: Bit counting modulo 3
+    // x & ~y means -> give me x unless y
+
+    // Approach 2: Bit counting modulo 3         Vertical Bit Counting Method
     int singleNumberBitSum(const std::vector<int>& nums) {
         int result = 0;
         for (int b = 0; b < 32; ++b) {
@@ -30,6 +32,8 @@ public:
         return result;
     }
 };
+
+// very intuitive method in interviews , if the elements repeat 5 times , we could just do % 5
 
 int main() {
     Solution sol;

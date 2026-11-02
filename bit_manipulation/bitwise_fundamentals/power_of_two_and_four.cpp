@@ -30,3 +30,12 @@ int main() {
 
     return 0;
 }
+
+
+
+// Mask	    Binary pattern	Purpose
+// 0x55555555	01010101...	Alternating bits
+// 0x33333333	00110011...	Groups of 2 bits
+// 0x0F0F0F0F	00001111...	Groups of 4 bits
+// 0xFFFFFFFF	11111111...	All 32 bits
+

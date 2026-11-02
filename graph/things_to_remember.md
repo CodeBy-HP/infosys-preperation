@@ -16,3 +16,23 @@ Whenever your pathfinding depends on "what you are carrying," "what time it is,"
 
 
 the Breadth-First Search (BFS) queue automatically guarantees the shortest path based on time.
+
+
+Choose DFS (The Bloodhound) When the Prompt Asks:
+"Return all possible paths/combinations/subsets."
+
+"Count the total number of ways to reach the target."
+
+"Does a path exist between A and B?" (If distance doesn't matter, DFS is faster to write).
+
+"Can you reach the end by making choices?" (Backtracking/Decision Trees).
+
+
+Choose BFS (The Radar) When the Prompt Asks:
+"Find the shortest path from A to B."
+
+"What is the minimum number of steps/operations to reach state X?"
+
+"Find the closest exit/zero/target."
+
+Why? Because BFS guarantees that the absolute first time you touch the target, it is the mathematically shortest route. You never waste time exploring a 5-step path if a 4-step path exists.

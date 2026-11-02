@@ -14,6 +14,9 @@ public:
     }
 };
 
+// no chance for duplicates as we are decreasing our sub , & our mask will only turn off the set bit , os it a decreasing operation also
+// if we run that upto 0, (0-1) would turn on all the bits , and & with mask will result in mask , thus causing infinite loop
+
 int main() {
     SubmaskEnumerator enumerator;
     int mask = 13; // binary 1101 (bits 0, 2, 3)

@@ -13,6 +13,29 @@ public:
         }
         return a;
     }
+    int getSum_brute_force(int a, int b) {
+        int ans = 0;
+        int carry = 0;
+        
+        for (int i = 0; i < 32; ++i) {
+            // Extract the i-th bit of both numbers
+            int bitA = (a >> i) & 1;
+            int bitB = (b >> i) & 1;
+            
+            // 1. Calculate the sum bit (1 if an odd number of inputs are 1)
+            int currentBit = bitA ^ bitB ^ carry;
+            
+            // 2. Calculate the next carry (1 if at least two inputs are 1)
+            carry = (bitA & bitB) | (bitA & carry) | (bitB & carry);
+            
+            // 3. If the sum bit is 1, turn on the i-th bit in our answer
+            if (currentBit == 1) {
+                ans |= (1U << i); // 1U (unsigned) prevents overflow errors on the 31st bit
+            }
+        }
+        
+        return ans;
+    }
 };
 
 int main() {
