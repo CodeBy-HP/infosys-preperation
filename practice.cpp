@@ -1,23 +1,27 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-int solve(int a,int b){
+int solve(int a,int b, int c){
 
-    int ans = 0;
-    int carry = 0;
+    int flips = 0;
     for(int i = 0; i < 32; i++){
+        int bitA = (a>>i) & 1;
+        int bitB = (b>>i) & 1;
+        int bitC = (c>>i) & 1;
 
-        int bit_a = (a >> i) & 1;
-        int bit_b = (b >> i) & 1;
-        // xor sum with carry
-        int sum = bit_a ^ bit_b  ^ carry;
+        if(bitC == 1){
+            if(bitA == 0 && bitB == 0){
+                flips += 1;
+            }
+        } else{
+            // bitC == 0 
+            // if both bitA & bitB are 1 , then flips will be 2 , if one of them is set then flips will be 1 , otherwise 0
 
-        if((bit_a && bit_b) || (bit_b && carry) || (carry && bit_a)) carry = 1;
-        else carry = 0;
+            flips += (bitA + bitB);
+        }
 
-        ans = ans | (sum << i);
     }
-    return ans;
+    
 }
 
 int main(){

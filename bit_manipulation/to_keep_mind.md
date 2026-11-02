@@ -46,6 +46,8 @@ xor of two numbers is addition without carry
 
 AND find the carry
 
-
 we can represent any number in powers of 2.
 
+This is a mathematical guarantee in combinatorics: If a bit is turned on (1) in AT LEAST one number in your array, it will be turned on in exactly half of all possible subsets.
+
+to check if all the bits are differnt btw two numbers just do & , if (a& b == 0) that means all the bits of these numbers are different
