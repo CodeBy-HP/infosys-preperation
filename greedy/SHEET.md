@@ -9,6 +9,7 @@ Focus: Sorting intervals by start or end times to maximize throughput or minimiz
 
 * **[Problem 1: Non-overlapping Intervals](interval_and_scheduling/non_overlapping_intervals.md)** ([C++ Code](interval_and_scheduling/non_overlapping_intervals.cpp)): Classic Activity Selection. Sorting by earliest finish time to maximize future timeline availability.
 * **[Problem 4: Task Scheduler](interval_and_scheduling/task_scheduler.md)** ([C++ Code](interval_and_scheduling/task_scheduler.cpp)): CPU cooldown cycles. Solved via both Max-Heap + Cooldown Queue simulation and an optimal closed-form math formula.
+* **[Problem 8: Merge Intervals](interval_and_scheduling/merge_intervals.md)** ([C++ Code](interval_and_scheduling/merge_intervals.cpp)): Sorting by start time and greedy linear sweep merging overlapping time slots in $O(N \log N)$ time.
 
 ---
 
@@ -25,6 +26,7 @@ Focus: Tracking rolling boundaries, maximum reach, and greedy leaps to bypass re
 Focus: Dynamically extracting the current maximum or minimum element as parameters and states update.
 
 * **[Data Center Cooling Optimization](priority_queue_and_heap_greedy/data_center_cooling.md)** ([C++ Code](priority_queue_and_heap_greedy/data_center_cooling.cpp), [Python Code](priority_queue_and_heap_greedy/data_center_cooling.py)): Dynamic heat load scheduling with minimum index separation constraints ($|i - j| \ge d$) and turbo multiplier thresholds.
+* **[Task Assignment Optimization](priority_queue_and_heap_greedy/task_assignment_optimization.md)** ([C++ Code](priority_queue_and_heap_greedy/task_assignment_optimization.cpp)): Assigning tasks to workers with skill eligibility using two-pointer sorting and max-heap profit prioritization.
 
 ---
 
@@ -42,3 +44,5 @@ Focus: Two-pass rule isolation, rearrangement inequalities, and optimal element 
 * **[Minimum Processing Time](math_and_constructive_greedy/min_processing_time.md)** ([C++ Code](math_and_constructive_greedy/min_processing_time.cpp)): Rearrangement inequality: pairing earliest available processors with longest task durations.
 * **[Minimum Steps to Clear Array](math_and_constructive_greedy/min_steps_to_clear_array.md)** ([C++ Code](math_and_constructive_greedy/min_steps_to_clear_array.cpp)): Distinct pair removal; majority bottleneck vs. physical limit: $\max(\text{max\_freq}, \lceil N / 2 \rceil)$.
 * **[Two City Scheduling with Transit Cost](math_and_constructive_greedy/two_city_scheduling.md)** ([C++ Code](math_and_constructive_greedy/two_city_scheduling.cpp)): Opportunity cost differences $\Delta[i] = \text{cost\_B}[i] - A[i]$ with sorting and Quickselect $O(N)$ optimization.
+* **[Auction Revenue Calculation](math_and_constructive_greedy/auction_revenue_calculation.md)** ([C++ Code](math_and_constructive_greedy/auction_revenue_calculation.cpp)): Sequential auction simulation with budget feasibility checks, tie-breaking, and winner state-tracking in $O(N \times M)$ time.
+* **[Defeat the Maximum Number of Monsters](math_and_constructive_greedy/defeat_max_monsters.md)** ([C++ Code](math_and_constructive_greedy/defeat_max_monsters.cpp)): Greedy RPG combat prioritizing weakest power requirement to harvest health bonus points in $O(N \log N)$ time.

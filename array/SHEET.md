@@ -2,7 +2,7 @@
 
 Welcome to the **Array Algorithms** paradigm. Arrays are the bedrock of all data structures. While conceptually simple, technical assessments frequently utilize arrays to evaluate **asymptotic optimization, pointer invariants, mathematical deductions, bitwise manipulation, and in-place transformations**.
 
-This sheet organizes **24 high-frequency problems** across **7 core patterns** tested in top-tier coding assessments.
+This sheet organizes **25 high-frequency problems** across **7 core patterns** tested in top-tier coding assessments.
 
 ---
 
@@ -35,6 +35,10 @@ This sheet organizes **24 high-frequency problems** across **7 core patterns** t
 * **[Problem 3: Container With Most Water](two_pointers_and_in_place/container_with_most_water.md)** ([C++ Code](two_pointers_and_in_place/container_with_most_water.cpp)): Proof of shrinking the shorter boundary to optimize $(R - L) \times \min(H_L, H_R)$.
 * **[Problem 4: Move Zeroes](two_pointers_and_in_place/move_zeroes.md)** ([C++ Code](two_pointers_and_in_place/move_zeroes.cpp)): In-place reader and writer pointer swapping preserving relative order of non-zeroes.
 * **[Problem 5: Max Consecutive Ones](two_pointers_and_in_place/max_consecutive_ones.md)** ([C++ Code](two_pointers_and_in_place/max_consecutive_ones.cpp)): Single-pass linear state machine tracking continuous runs.
+* **[Problem 6: Remove Duplicates from Sorted Array](two_pointers_and_in_place/remove_duplicates_from_sorted_array.md)** ([C++ Code](two_pointers_and_in_place/remove_duplicates_from_sorted_array.cpp)): Fast reader and writer two-pointer in-place compaction in $O(N)$ time and $O(1)$ space.
+* **[The Data Doubler Algorithm](two_pointers_and_in_place/the_data_doubler.md)** ([C++ Code](two_pointers_and_in_place/the_data_doubler.cpp)): Circular playlist concatenation using $i \pmod n$ traversal in $O(N)$ time.
+* **[Month to Season Mapping](two_pointers_and_in_place/month_to_season_mapping.md)** ([C++ Code](two_pointers_and_in_place/month_to_season_mapping.cpp)): Boundary guard clauses and season interval categorization in $O(1)$ time.
+* **[Minimum Swaps to Make Array Even/Odd](two_pointers_and_in_place/min_swaps_even_odd.md)** ([C++ Code](two_pointers_and_in_place/min_swaps_even_odd.cpp)): Parity segregation via inversion counting and complementary swap theorem: $\text{swaps}(E) + \text{swaps}(O) = E \times O$.
 
 ---
 
@@ -45,6 +49,7 @@ This sheet organizes **24 high-frequency problems** across **7 core patterns** t
 * **[Problem 7: Continuous Subarray Sum](prefix_sum_and_difference_array/continuous_subarray_sum.md)** ([C++ Code](prefix_sum_and_difference_array/continuous_subarray_sum.cpp)): Modulo remainder hashing with earliest index tracking enforcing length $\ge 2$.
 * **[Problem 8: Range Addition / Difference Array](prefix_sum_and_difference_array/range_addition.md)** ([C++ Code](prefix_sum_and_difference_array/range_addition.cpp)): Difference array boundary tagging transforming $O(K \times N)$ updates into $O(N + K)$ prefix recovery.
 * **[Problem 9: Divisible Sum and Difference Pairs](prefix_sum_and_difference_array/divisible_sum_diff_pairs.md)** ([C++ Code](prefix_sum_and_difference_array/divisible_sum_diff_pairs.cpp)): Dual modulo remainder pairing solving $(a + b) \pmod D == 0$ and $|a - b| \pmod M == 0$.
+* **[Problem 10: Subarray Sums Divisible by K](prefix_sum_and_difference_array/subarray_sums_divisible_by_k.md)** ([C++ Code](prefix_sum_and_difference_array/subarray_sums_divisible_by_k.cpp)): Normalized prefix remainder hashing $((P \pmod k) + k) \pmod k$ identifying divisible spans in $O(N)$ time.
 
 ---
 
@@ -64,6 +69,7 @@ This sheet organizes **24 high-frequency problems** across **7 core patterns** t
 * **[Problem 14: Maximum Product Subarray](subarrays_and_kadane/maximum_product_subarray.md)** ([C++ Code](subarrays_and_kadane/maximum_product_subarray.cpp)): Dual tracking of both `min` and `max` products to handle negative sign inversions.
 * **[Problem 15: Next Permutation](subarrays_and_kadane/next_permutation.md)** ([C++ Code](subarrays_and_kadane/next_permutation.cpp)): 3-step pivot detection, smallest larger element swap, and suffix inversion.
 * **[Problem 16: Product of Array Except Self](subarrays_and_kadane/product_of_array_except_self.md)** ([C++ Code](subarrays_and_kadane/product_of_array_except_self.cpp)): Prefix and suffix product sweeps achieving $O(1)$ auxiliary memory without division.
+* **[Problem 17: Frequency Balanced Window](subarrays_and_kadane/frequency_balanced_window.md)** ([C++ Code](subarrays_and_kadane/frequency_balanced_window.cpp)): Strict majority window optimization via $+1/-1$ prefix difference transformation and Fenwick tree prefix minimum queries.
 
 ---
 

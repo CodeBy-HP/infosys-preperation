@@ -23,3 +23,9 @@
 ### 4. Single Moving Entity / State-Space BFS (LeetCode)
 
 * **[LeetCode 1293 - Shortest Path in a Grid with Obstacles Elimination](bfs/state_space_bfs/shortest_path_in_a_grid_with_obstacles_elimination.md):** While there is no fire here, this problem forces you to track a 3D visited state: `visited[x][y][obstacles_eliminated]`. If you want to practice what happens when "just marking the 2D cell as visited is not enough" (like we discussed with a moving guard), this is a phenomenal introduction to 3D BFS.
+
+---
+
+### 5. Shortest Paths in Unweighted Graphs
+
+* **[Shortest Path in Unweighted Graph](shortest_paths/unweighted_bfs/shortest_path_in_unweighted_graph.md):** Fundamental single-source BFS on unweighted, undirected graphs guaranteeing shortest path distance in $O(V + E)$ time.

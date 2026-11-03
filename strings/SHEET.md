@@ -28,6 +28,7 @@ This sheet organizes **20 high-frequency problems** across **6 core patterns** f
 * **[Problem 2: Minimum Window Substring](sliding_window_and_two_pointers/minimum_window_substring.md)** ([C++ Code](sliding_window_and_two_pointers/minimum_window_substring.cpp)): The quintessential hard sliding window problem: expanding to qualify (`formed == required`) and contracting to minimize.
 * **[Problem 3: Longest Repeating Character Replacement](sliding_window_and_two_pointers/longest_repeating_character_replacement.md)** ([C++ Code](sliding_window_and_two_pointers/longest_repeating_character_replacement.cpp)): Monotonic non-shrinking window tracking $(W - \text{maxFreq} \le k)$ in $O(N)$ time and $O(26)$ space.
 * **[Problem 4: Longest Contiguous Subarray with Bounded Adjacent Difference](sliding_window_and_two_pointers/longest_contiguous_subarray.md)** ([C++ Code](sliding_window_and_two_pointers/longest_contiguous_subarray.cpp)): Linear scan window reset tracking contiguous subarray lengths under adjacent difference bounds.
+* **[Count Distinct Substrings with Exactly K Unique Characters](sliding_window_and_two_pointers/count_distinct_substrings_k_unique.md)** ([C++ Code](sliding_window_and_two_pointers/count_distinct_substrings_k_unique.cpp)): Frequency tracking with deduplication hash set for distinct substrings and $\text{AtMost}(K) - \text{AtMost}(K - 1)$ sliding window for total occurrences.
 
 ---
 

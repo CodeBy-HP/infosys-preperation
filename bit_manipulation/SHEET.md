@@ -117,6 +117,7 @@ This sheet organizes **29 production-grade problems** across **9 core patterns**
 * **[Problem 22: Total Hamming Distance](bit_contribution_and_hamming/total_hamming_distance.md)** ([C++ Code](bit_contribution_and_hamming/total_hamming_distance.cpp)): Independent column-by-column pair counting $c \times (N - c)$ in $O(32 N)$ linear time.
 * **[Problem 23: Sum of All Subset XOR Totals](bit_contribution_and_hamming/sum_of_all_subset_xor_totals.md)** ([C++ Code](bit_contribution_and_hamming/sum_of_all_subset_xor_totals.cpp)): Mathematical proof reducing subset XOR sum to $(\text{OR sum}) \times 2^{N-1}$ in $O(N)$ time.
 * **[Problem 24: Minimum Flips to Make a OR b Equal to c](bit_contribution_and_hamming/minimum_flips_or_equal_to_target.md)** ([C++ Code](bit_contribution_and_hamming/minimum_flips_or_equal_to_target.cpp)): Bitwise truth table evaluation determining minimal bit flips in $O(1)$ time.
+* **[Maximize XOR Sum](bit_contribution_and_hamming/maximize_xor_sum.md)** ([C++ Code](bit_contribution_and_hamming/maximize_xor_sum.cpp)): Maximizing $\sum (x \oplus A[i])$ under upper bound $x \le K$ using bit contribution analysis and Digit DP in $O(B)$ time.
 
 ---
 
