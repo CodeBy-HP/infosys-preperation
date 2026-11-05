@@ -4,6 +4,75 @@
 
 using namespace std;
 
+class Optimized_CyclicPrefixXOR {
+private:
+    // Helper function to calculate max score for a given array direction
+    long long getMaxScore(const vector<int>& A) {
+        int N = A.size();
+        
+        // Step 1: Create a prefix XOR array of size 2N to handle the cyclic nature seamlessly
+        vector<int> pref(2 * N + 1, 0);
+        for (int i = 0; i < 2 * N; i++) {
+            pref[i + 1] = pref[i] ^ A[i % N];
+        }
+
+        // Step 2: Initialize bit counts for the first window of size N (pref[1] to pref[N])
+        vector<int> bitCount(30, 0);
+        for (int i = 1; i <= N; i++) {
+            for (int b = 0; b < 30; b++) {
+                if ((pref[i] >> b) & 1) {
+                    bitCount[b]++;
+                }
+            }
+        }
+
+        long long maxScore = 0;
+
+        // Step 3: Slide the window across all N possible starting indices
+        for (int S = 0; S < N; S++) {
+            long long currentScore = 0;
+            
+            // Calculate the score for the current starting index S bit by bit
+            for (int b = 0; b < 30; b++) {
+                long long ones = bitCount[b];
+                
+                // If the base prefix (pref[S]) has this bit set, XORing will flip 1s to 0s and 0s to 1s.
+                if ((pref[S] >> b) & 1) {
+                    ones = N - ones; 
+                }
+                
+                // Add the contribution of this bit to the total score
+                currentScore += ones * (1LL << b);
+            }
+            maxScore = max(maxScore, currentScore);
+
+            // Slide the window forward: remove the outgoing element, add the incoming element
+            if (S + N + 1 <= 2 * N) {
+                for (int b = 0; b < 30; b++) {
+                    if ((pref[S + 1] >> b) & 1) bitCount[b]--;
+                    if ((pref[S + N + 1] >> b) & 1) bitCount[b]++;
+                }
+            }
+        }
+        return maxScore;
+    }
+
+public:
+    long long maximumCyclicPrefixXOR(vector<int>& arr) {
+        // Find max score going Right (Clockwise)
+        long long maxRight = getMaxScore(arr);
+
+        // Reverse the array to simulate going Left (Counter-Clockwise)
+        vector<int> revArr = arr;
+        reverse(revArr.begin(), revArr.end());
+        
+        // Find max score going Left
+        long long maxLeft = getMaxScore(revArr);
+
+        return max(maxRight, maxLeft);
+    }
+};
+
 class MaxCyclicPrefixXORSum {
 private:
     long long evaluateDirection(const vector<int>& arr) {
