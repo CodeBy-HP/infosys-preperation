@@ -58,6 +58,7 @@ This sheet organizes **25 high-frequency problems** across **7 core patterns** t
 
 * **[Problem 10: Sliding Window Maximum](sliding_window/sliding_window_maximum.md)** ([C++ Code](sliding_window/sliding_window_maximum.cpp)): Monotonic decreasing deque maintaining candidate maxima in $O(N)$ amortized time.
 * **[Problem 11: Sliding Subarray Beauty](sliding_window/sliding_subarray_beauty.md)** ([C++ Code](sliding_window/sliding_subarray_beauty.cpp)): Bounded frequency buckets ($[-50, -1]$) tracking the $x^{\text{th}}$ smallest negative number in $O(1)$ space.
+* **[Sliding Window X-th Smallest Element](sliding_window/sliding_window_xth_smallest.md)** ([C++ Code](sliding_window/sliding_window_xth_smallest.cpp)): The unbounded value generalization ($-10^9 \le \text{nums}[i] \le 10^9$) using the Two Multisets (BST) balanced partition pattern in $O(N \log K)$ time.
 * **[Problem 12: Maximum Consecutive Vacation Days](sliding_window/max_consecutive_vacation.md)** ([C++ Code](sliding_window/max_consecutive_vacation.cpp)): Coordinate-compressed sliding window over sorted obligations up to $N = 10^9$.
 
 ---
@@ -69,6 +70,7 @@ This sheet organizes **25 high-frequency problems** across **7 core patterns** t
 * **[Problem 14: Maximum Product Subarray](subarrays_and_kadane/maximum_product_subarray.md)** ([C++ Code](subarrays_and_kadane/maximum_product_subarray.cpp)): Dual tracking of both `min` and `max` products to handle negative sign inversions.
 * **[Problem 15: Next Permutation](subarrays_and_kadane/next_permutation.md)** ([C++ Code](subarrays_and_kadane/next_permutation.cpp)): 3-step pivot detection, smallest larger element swap, and suffix inversion.
 * **[Problem 16: Product of Array Except Self](subarrays_and_kadane/product_of_array_except_self.md)** ([C++ Code](subarrays_and_kadane/product_of_array_except_self.cpp)): Prefix and suffix product sweeps achieving $O(1)$ auxiliary memory without division.
+* **[Maximum Sum Circular Subarray (Kadane's)](subarrays_and_kadane/maximum_sum_circular_subarray.md)** ([C++ Code](subarrays_and_kadane/maximum_sum_circular_subarray.cpp)): Dual Kadane's algorithm evaluating linear maximum vs. wrapping boundary maximum ($\text{total} - \min$) with negative edge case handling in $O(N)$ time.
 * **[Problem 17: Frequency Balanced Window](subarrays_and_kadane/frequency_balanced_window.md)** ([C++ Code](subarrays_and_kadane/frequency_balanced_window.cpp)): Strict majority window optimization via $+1/-1$ prefix difference transformation and Fenwick tree prefix minimum queries.
 
 ---
