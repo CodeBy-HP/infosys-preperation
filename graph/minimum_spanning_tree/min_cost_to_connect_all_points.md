@@ -1,40 +1,84 @@
-### Problem 11: Min Cost to Connect All Points (Minimum Spanning Tree)
+# Min Cost to Connect All Points (LeetCode 1584)
 
-**Problem Statement:**
-You are given an array of `points` representing integer coordinates on a 2D plane, where `points[i] = [xi, yi]`.
+## Problem Statement
+You are given an array `points` representing integer coordinates of some points on a 2D-plane, where `points[i] = [x_i, y_i]`.
 
-The cost of connecting any two points is the **Manhattan distance** between them: `|xi - xj| + |yi - yj|`.
+The cost of connecting two points `[x_i, y_i]` and `[x_j, y_j]` is the **Manhattan distance** between them:
+$$\text{dist}(i, j) = |x_i - x_j| + |y_i - y_j|$$
 
-Return the minimum total cost to make all points connected. All points are considered connected if there is exactly one simple path between any two points (meaning all points are in a single group, and there are no cycles).
-
-**Sample Input:**
-
-```text
-Points: [[0,0], [2,2], [3,10], [5,2], [7,0]]
-
-```
-
-**Sample Output:**
-
-```text
-20
-
-```
-
-*(Explanation: You can connect [0,0] to [2,2] for a cost of 4. Then [2,2] to [5,2] for a cost of 3. Then [5,2] to [7,0] for a cost of 4. Finally, [2,2] to [3,10] for a cost of 9. Total cost = 4 + 3 + 4 + 9 = 20. Every point is reachable, no cycles exist, and this is the absolute cheapest network possible.)*
+Return the **minimum cost** to make all points connected. All points are connected if there is **exactly one simple path** between any pair of points.
 
 ---
 
-### What exactly is a Minimum Spanning Tree (MST)?
+## Constraints
+* `1 <= points.length <= 1000`
+* `-10^6 <= x_i, y_i <= 10^6`
+* All pairs `(x_i, y_i)` are distinct.
 
-In graph theory, a "Spanning Tree" is a subset of a graph that connects all the vertices together without creating any closed loops (cycles).
-The *Minimum* Spanning Tree is the version of this network where the sum of the edge weights is as small as mathematically possible.
+---
 
-If you have $N$ cities and want to build the cheapest road network so every city is reachable, you are looking for an MST. A fundamental rule of graph theory: **A valid MST for $N$ nodes will always contain exactly $N - 1$ edges.**
+## Examples
 
-### The Two Legendary Algorithms
+### Example 1
+**Input:**
+```text
+points = [[0, 0], [2, 2], [3, 10], [5, 2], [7, 0]]
+```
+**Output:**
+```text
+20
+```
+**Explanation:**
+Connect points to form a minimum spanning tree:
+- Connect `(0, 0)` to `(2, 2)` with cost 4.
+- Connect `(2, 2)` to `(5, 2)` with cost 3.
+- Connect `(5, 2)` to `(7, 0)` with cost 4.
+- Connect `(2, 2)` to `(3, 10)` with cost 9.
+Total cost = $4 + 3 + 4 + 9 = 20$.
 
-There are two famous ways to solve MST problems, and they perfectly utilize data structures you have already mastered earlier on this sheet:
+```
+(3,10)
+  |
+ (9)
+  |
+(2,2) --(3)-- (5,2)
+  |             |
+ (4)           (4)
+  |             |
+(0,0)         (7,0)
+```
 
-1. **Kruskal's Algorithm (The Edge-Centric Approach):** This heavily utilizes the **Disjoint Set Union (DSU)** you learned in the "Number of Islands II" problem. You calculate all possible edges, sort them from cheapest to most expensive, and try to merge them using DSU. If two points already share the same root, you skip the edge because it would create a cycle.
-2. **Prim's Algorithm (The Node-Centric Approach):** This approach uses a **Min-Heap (Priority Queue)** and feels very similar to Dijkstra's Algorithm. You start at an arbitrary point, throw all its connecting edges into the queue, and greedily expand your network one node at a time by always picking the cheapest available outgoing edge.
+---
+
+### Example 2
+**Input:**
+```text
+points = [[3, 12], [-2, 5], [-4, 1]]
+```
+**Output:**
+```text
+18
+```
+
+---
+
+## Algorithmic Approaches
+
+### Why Prim's with Dense Array Outperforms Kruskal's Here
+This problem represents a **complete graph** where every point has an edge to every other point:
+$$V = N, \quad E = \frac{N(N - 1)}{2} \approx 5 \times 10^5 \text{ edges}$$
+- **Kruskal's Algorithm:** Generating and sorting all $5 \times 10^5$ edges takes $O(N^2 \log(N^2))$ time and high memory.
+- **Dense Prim's Algorithm (Without Priority Queue):**
+  - Maintains `minDist[i]`: Minimum distance to connect point $i$ to the currently formed MST component.
+  - In each step:
+    - Find the unvisited point $u$ with minimum `minDist[u]` in $O(N)$ linear scan.
+    - Mark $u$ as visited.
+    - Add `minDist[u]` to total cost.
+    - Update `minDist[v] = min(minDist[v], manhattanDistance(u, v))` for all unvisited points $v$ in $O(N)$ time.
+  - Total Time: $O(N^2)$ without any heap overhead!
+
+---
+
+## Complexity Analysis
+- **Time Complexity:** $O(N^2)$ using dense Prim's array representation ($1000^2 = 10^6$ operations $\approx 3$ ms).
+- **Space Complexity:** $O(N)$ for `minDist` and `visited` arrays (no explicit edge list stored).

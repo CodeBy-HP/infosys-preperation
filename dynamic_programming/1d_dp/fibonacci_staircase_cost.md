@@ -31,6 +31,33 @@ Print a single integer representing the minimum total cost.
 
 ---
 
+## Examples
+
+### Example 1:
+```text
+Input: N = 6, A = 10, B = 2
+Output: 30
+Explanation:
+Distance to cover D = N - 1 = 6 - 1 = 5.
+5 is a Fibonacci number (5), so we can reach step 6 in m = 1 jump of length 5.
+Total cost = 1 * A + B * D = 1 * 10 + 2 * 5 = 10 + 10 = 20... wait, let's trace:
+Jump 1: length 5 -> cost = 10 + 2 * 5 = 20.
+Output: 20
+```
+
+### Example 2:
+```text
+Input: N = 5, A = 5, B = 3
+Output: 22
+Explanation:
+Distance D = 5 - 1 = 4.
+Fibonacci numbers are 1, 2, 3, 5... 4 is not Fibonacci.
+Minimum jumps to sum to 4: 3 + 1 (m = 2 jumps).
+Cost = 2 * A + B * D = 2 * 5 + 3 * 4 = 10 + 12 = 22.
+```
+
+---
+
 ## Constraints
 
 - $2 \le N \le 2 \times 10^5$ (for DP evaluation) / $N \le 10^9$ (for Zeckendorf Greedy)

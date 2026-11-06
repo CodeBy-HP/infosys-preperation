@@ -1,31 +1,99 @@
-### Problem 13: All-Pairs Shortest Path (Floyd-Warshall)
+# Floyd-Warshall Algorithm (All-Pairs Shortest Path)
 
-**Problem Statement:**
-Dijkstra and Bellman-Ford are **Single-Source** algorithms—they give you the shortest path from *one* specific starting node to everywhere else.
+## Problem Statement
+The problem is to find the **shortest distances between every pair of vertices** in a directed/undirected weighted graph with `V` vertices.
 
-But what if you are building a routing table for the internet, or calculating a distance matrix for a map application? You need the absolute shortest path from **every node to every other node simultaneously**.
+The graph is given as an adjacency matrix `matrix[V][V]`, where:
+- `matrix[i][j]` is the weight of the directed edge from $i$ to $j$.
+- If there is no edge from $i$ to $j$, `matrix[i][j] = -1`.
+- `matrix[i][i] = 0`.
 
-**Sample Input:**
-An adjacency matrix where `matrix[i][j]` represents the direct road from city `i` to city `j`. If there is no direct road, the value is infinity (`1e9`).
+Update `matrix` in-place such that `matrix[i][j]` stores the shortest distance from $i$ to $j$. If no path exists, keep `matrix[i][j] = -1`.
+Also detect if the graph contains any **negative weight cycle**.
 
 ---
 
-### The Paradigm Shift: Dynamic Programming on Graphs
+## Constraints
+* `1 <= V <= 100` (or `400` in standard problem sets)
+* `-1000 <= matrix[i][j] <= 1000` (can be negative!)
+* Matrix dimensions: `V x V`.
 
-The **Floyd-Warshall Algorithm** completely Abandons the idea of queues, BFS, or edge relaxation. Instead, it uses pure 2D Dynamic Programming.
+---
 
-The core philosophy is built on a single, brilliant question:
-*"I currently know the shortest distance from City A to City B. But what if I travel from City A to City B **via City K**? Is it cheaper?"*
+## Examples
 
-**How it works:**
+### Example 1
+**Input:**
+```text
+matrix = [
+  [0,   2, -1, -1],
+  [1,   0,  3, -1],
+  [-1, -1,  0, -1],
+  [3,   5,  4,  0]
+]
+```
+**Output:**
+```text
+[
+  [0, 2, 5, -1],
+  [1, 0, 3, -1],
+  [-1, -1, 0, -1],
+  [3, 5, 4, 0]
+]
+```
+**Explanation:**
+- From node 0 to 2: Path `0 -> 1 -> 2` costs $2 + 3 = 5$.
+- Node 3 can reach 0, 1, and 2.
+- No node can reach 3 from {0, 1, 2}.
 
-1. **The Matrix:** You start with a 2D matrix where `dist[i][j]` is just the direct edge weight between `i` and `j`. The distance from any node to itself `dist[i][i]` is `0`.
-2. **The Intermediary (Node K):** You pick a node, let's call it `k` (Node 0). You look at every single pair of cities `(i, j)` and ask: *"Is `dist[i][0] + dist[0][j]` strictly less than my current `dist[i][j]`?"* If yes, you update `dist[i][j]`.
-3. **The Loop:** You repeat this process, allowing node 1 to be the intermediary, then node 2, all the way up to node $N-1$.
+```
+(0) <======(1)======> (1)
+  \                    |
+   \--- (path = 5) ---> (2)
+```
 
-By the time you finish allowing every single node to act as a potential middleman, the matrix mathematically guarantees it contains the absolute shortest path between every pair of nodes.
+---
 
-### The $O(N^3)$ Catch
+### Example 2 (Negative Cycle Detection)
+**Input:**
+```text
+matrix = [
+  [ 0,  1, -1],
+  [-1,  0, -1],
+  [-1, -2,  0]  (cycle with negative sum)
+]
+```
+If after running Floyd-Warshall, `matrix[i][i] < 0` for any vertex $i$, then vertex $i$ is part of a **negative weight cycle**!
 
-Because of the three nested loops, the time complexity is strictly $O(N^3)$.
-This means Floyd-Warshall is only used when the number of nodes is relatively small (typically $N \le 400$). If $N$ is 10,000, $N^3$ is a trillion operations, which will instantly cause a Time Limit Exceeded error. In massive graphs, running Dijkstra $N$ times is faster!
+---
+
+## Algorithmic Approaches
+
+### The Dynamic Programming Intermediate Node Paradigm
+Let $D^k[i][j]$ be the shortest distance from vertex $i$ to vertex $j$ using only intermediate vertices from the subset $\{0, 1, \dots, k\}$.
+
+$$\text{Transition: } D^k[i][j] = \min(D^{k-1}[i][j], \; D^{k-1}[i][k] + D^{k-1}[k][j])$$
+
+### Step-by-Step Algorithm
+1. Replace `-1` with $\infty$ (except on diagonal `matrix[i][i] = 0`).
+2. Run three nested loops where the **outer loop $k$ must be the intermediate vertex**:
+   ```cpp
+   for (int k = 0; k < V; ++k) {
+       for (int i = 0; i < V; ++i) {
+           for (int j = 0; j < V; ++j) {
+               if (matrix[i][k] != INF && matrix[k][j] != INF) {
+                   matrix[i][j] = min(matrix[i][j], matrix[i][k] + matrix[k][j]);
+               }
+           }
+       }
+   }
+   ```
+3. **Negative Cycle Check:**
+   - Scan diagonal: If `matrix[i][i] < 0` for any $i$, report a negative cycle.
+4. Convert remaining $\infty$ entries back to `-1`.
+
+---
+
+## Complexity Analysis
+- **Time Complexity:** $O(V^3)$ — Strictly 3 nested loops of length $V$.
+- **Space Complexity:** $O(1)$ auxiliary memory when updating the adjacency matrix in-place ($O(V^2)$ for the matrix itself).

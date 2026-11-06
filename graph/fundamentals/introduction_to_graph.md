@@ -1,38 +1,58 @@
-# Introduction to Graphs
+# Introduction to Graphs (Representations & Properties)
 
-## Graph Definition & Representations
-A **Graph** $G = (V, E)$ consists of a set of vertices (nodes) $V$ and a set of edges (connections) $E$.
-Graphs can be:
-- **Directed** (arcs with orientation $u \to v$) vs. **Undirected** (symmetric edges $(u, v)$).
-- **Weighted** (each edge has a scalar cost $w$) vs. **Unweighted** (unit edge costs).
-- **Cyclic** (contains at least one closed loop) vs. **Acyclic** (no cycles; a DAG is a Directed Acyclic Graph).
+## 1. What is a Graph?
+A **Graph** $G = (V, E)$ is a non-linear data structure consisting of a finite set of **Vertices (Nodes)** $V$ and a set of **Edges (Links)** $E$ connecting pairs of vertices.
+
+Unlike trees, graphs do not have a designated root node and may contain cycles, multiple disjoint components, and arbitrary branching in any direction.
 
 ---
 
-## Storage Paradigms
+## 2. Fundamental Graph Classifications
 
-### 1. Adjacency Matrix
-A 2D array `matrix[V][V]` where `matrix[u][v]` stores the edge weight (or 1 for unweighted).
-- **Space:** $O(V^2)$
-- **Edge Existence Check $(u, v)$:** $O(1)$
-- **Find Neighbors of $u$:** $O(V)$
-- **Ideal for:** Dense graphs ($E \approx V^2$).
-
-### 2. Adjacency List
-An array of lists / vectors `vector<vector<pair<int, int>>> adj(V)` where `adj[u]` contains all pairs `{v, weight}`.
-- **Space:** $O(V + E)$ (or $O(V + 2E)$ for undirected)
-- **Edge Existence Check $(u, v)$:** $O(\text{deg}(u))$
-- **Find Neighbors of $u$:** $O(\text{deg}(u))$
-- **Ideal for:** Sparse graphs ($E \ll V^2$), standard in 99% of competitive programming and interview problems.
-
----
-
-## Complexity Comparison
-| Operation | Adjacency Matrix | Adjacency List |
+| Type | Definition | Key Characteristics |
 |---|---|---|
-| Space Complexity | $O(V^2)$ | $O(V + E)$ |
-| Add Edge | $O(1)$ | $O(1)$ |
-| Remove Edge | $O(1)$ | $O(\text{deg}(u))$ |
-| Query Edge $(u, v)$ | $O(1)$ | $O(\text{deg}(u))$ |
-| Iterate Neighbors | $O(V)$ | $O(\text{deg}(u))$ |
+| **Undirected Graph** | Edges have no direction ($u - v \iff v - u$). | $\text{Degree}(u) = \text{number of incident edges}$. $\sum \text{deg} = 2E$ (Handshaking Lemma). |
+| **Directed Graph (Digraph)** | Edges have direction ($u \to v$). | Separate **In-Degree** (incoming) and **Out-Degree** (outgoing). $\sum \text{in-deg} = \sum \text{out-deg} = E$. |
+| **Weighted Graph** | Each edge carries a cost or weight $w$. | Used in shortest path (Dijkstra) and minimum spanning tree (MST) algorithms. |
+| **Cyclic vs Acyclic** | Contains closed loops vs no loops. | A Directed Acyclic Graph is called a **DAG**. |
+| **Connected vs Disconnected**| Path exists between every pair vs isolated components. | Requires outer loop over all $V$ vertices in traversals. |
 
+---
+
+## 3. Graph Storage Representations in C++
+
+### Representation 1: Adjacency Matrix
+A 2D array of size $V \times V$ where `matrix[u][v] = 1` (or edge weight) if an edge connects $u$ and $v$.
+```cpp
+vector<vector<int>> adjMatrix(V, vector<int>(V, 0));
+// Add edge u - v:
+adjMatrix[u][v] = 1;
+adjMatrix[v][u] = 1; // for undirected
+```
+- **Time Complexity:** $O(1)$ to query edge existence between any $(u, v)$.
+- **Space Complexity:** $O(V^2)$ — **Prohibitive for large sparse graphs** (e.g. $V = 10^5 \implies 10^{10}$ integers = 40 GB memory!).
+
+---
+
+### Representation 2: Adjacency List (Standard Choice)
+An array of lists/vectors where `adj[u]` stores all adjacent neighbors of vertex $u$.
+```cpp
+vector<int> adj[V]; // Unweighted
+// For weighted:
+vector<pair<int, int>> adj[V]; // {neighbor, weight}
+
+// Add edge u -> v with weight w:
+adj[u].push_back({v, w});
+```
+- **Time Complexity:** $O(\text{deg}(u))$ to iterate over all neighbors of vertex $u$.
+- **Space Complexity:** $O(V + 2E)$ for undirected, $O(V + E)$ for directed — **Strictly optimal linear memory**.
+
+---
+
+## 4. Graph Properties & Formulas
+1. **Handshaking Lemma:** In any undirected graph, the sum of degrees of all vertices equals twice the number of edges:
+   $$\sum_{v \in V} \text{deg}(v) = 2 |E|$$
+   *Consequence:* The number of vertices with an odd degree is always **even**.
+2. **Maximum Edges in a Simple Graph:**
+   - Undirected: $\binom{V}{2} = \frac{V(V - 1)}{2}$.
+   - Directed: $V(V - 1)$.

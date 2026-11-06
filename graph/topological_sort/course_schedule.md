@@ -1,59 +1,80 @@
-### Problem 9: Course Schedule (Topological Sort)
+# Course Schedule I (LeetCode 207)
 
-We are officially leaving the 2D grid. Instead of moving up, down, left, and right, we are now moving along strictly one-way streets: **Directed Graphs**.
+## Problem Statement
+There are a total of `numCourses` courses you have to take, labeled from `0` to `numCourses - 1`. You are given an array `prerequisites` where `prerequisites[i] = [a_i, b_i]` indicates that you **must take course $b_i$ first** if you want to take course $a_i$.
 
-**Problem Statement:**
-You have to take `N` courses, labeled from `0` to `N-1`. You are given an array of `prerequisites` where `prerequisites[i] = [A, B]` means you **must** take course `B` before you can take course `A`.
+- For example, the pair `[0, 1]` indicates that to take course `0` you have to first take course `1` (directed edge: $1 \to 0$).
 
-**Your Task:**
-Return `true` if it is possible for you to finish all courses. Otherwise, return `false`.
-
-**Sample Input 1:**
-
-```text
-N = 2, Prerequisites = [[1, 0]]
-
-```
-
-**Sample Output 1:**
-
-```text
-true
-
-```
-
-*(Explanation: To take course 1, you must first take course 0. You can take 0, then 1. Perfectly valid.)*
-
-**Sample Input 2:**
-
-```text
-N = 2, Prerequisites = [[1, 0], [0, 1]]
-
-```
-
-**Sample Output 2:**
-
-```text
-false
-
-```
-
-*(Explanation: To take 1, you need 0. But to take 0, you need 1. This creates a Mexican standoff (a Cycle). Neither can be taken.)*
+Return `true` if you can finish all courses. Otherwise, return `false`.
 
 ---
 
-### The Paradigm Shift: Indegrees
+## Constraints
+* `1 <= numCourses <= 2000`
+* `0 <= prerequisites.length <= 5000`
+* `prerequisites[i].length == 2`
+* `0 <= a_i, b_i < numCourses`
+* All the pairs `prerequisites[i]` are **unique**.
 
-In grid problems, you cared about coordinates `(x, y)`. In Directed Graphs, you care about dependencies. The most powerful way to solve this is using **Kahn's Algorithm** (which is just a specialized BFS).
+---
 
-Instead of a `visited` array, we introduce a brilliant new concept: the **Indegree Array**.
-The "Indegree" of a node is exactly how many arrows are pointing *at* it. In this problem, a course's Indegree is simply its number of unfinished prerequisites.
+## Examples
 
-**The Strategy:**
+### Example 1
+**Input:**
+```text
+numCourses = 2, prerequisites = [[1, 0]]
+```
+**Output:**
+```text
+true
+```
+**Explanation:**
+There are 2 courses to take. To take course 1 you must first finish course 0 ($0 \to 1$). This is feasible: take course 0, then course 1.
 
-1. **Count Indegrees:** Scan the prerequisites and count how many dependencies every course has.
-2. **The Queue of Freedom:** Find every course with an Indegree of `0` (meaning it requires nothing) and push it into a standard BFS queue.
-3. **The Chain Reaction:** Pop a course from the queue. You just "graduated" from it! Now, look at every advanced course that depended on it, and decrease their Indegree by 1.
-4. **Unlock:** If any advanced course drops to an Indegree of `0`, it is now unlocked! Push it into the queue.
+---
 
-If you finish this process and you were able to take all `N` courses, you win. If some courses are left with Indegrees $> 0$, it means they were trapped in a cycle and could never be unlocked.
+### Example 2
+**Input:**
+```text
+numCourses = 2, prerequisites = [[1, 0], [0, 1]]
+```
+**Output:**
+```text
+false
+```
+**Explanation:**
+To take course 1 you must have finished course 0, and to take course 0 you must have finished course 1. This creates a circular dependency (directed cycle), making it impossible to complete all courses.
+
+```
+(0) <=====> (1)
+  (Circular Dependency / Deadlock)
+```
+
+---
+
+## Algorithmic Approaches
+
+### Equivalence to Directed Cycle Detection
+Completing all courses is possible **if and only if the dependency graph is a Directed Acyclic Graph (DAG)**.
+
+### Approach 1: Kahn's Algorithm (BFS In-Degree)
+1. Build adjacency list: For each `[a, b]`, add edge $b \to a$ and increment `inDegree[a]++`.
+2. Push all courses with `inDegree[i] == 0` into queue.
+3. Maintain `completedCourses = 0`.
+4. While queue is non-empty:
+   - Pop `curr`, increment `completedCourses++`.
+   - For each neighbor `next` of `curr`:
+     - Decrement `inDegree[next]--`.
+     - If `inDegree[next] == 0`, push to queue.
+5. Return `completedCourses == numCourses`.
+
+### Approach 2: DFS 3-Coloring / Path Visited
+Maintain `vis` and `pathVis`:
+- If an adjacent node is currently on `pathVis`, return `false` (cycle detected).
+
+---
+
+## Complexity Analysis
+- **Time Complexity:** $O(V + E)$ where $V = \text{numCourses}$ and $E = \text{prerequisites.length}$.
+- **Space Complexity:** $O(V + E)$ for adjacency list and $O(V)$ for queue and in-degree tracking.

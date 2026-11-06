@@ -1,46 +1,81 @@
-### Problem 14: Bridges in a Graph (Critical Connections in a Network)
+# Critical Connections in a Network / Bridges in a Graph (LeetCode 1192)
 
-We have covered shortest paths, dependencies, and networks. Now we enter **Graph Vulnerability**.
+## Problem Statement
+There are `n` servers numbered from `0` to `n - 1` connected by undirected server-to-server `connections` forming a network where `connections[i] = [a_i, b_i]` represents a connection between servers $a_i$ and $b_i$. Any server can reach other servers directly or indirectly through the network.
 
-**Problem Statement:**
-You are given an undirected graph representing a massive data center. The nodes are servers, and the edges are cables connecting them.
+A **critical connection (bridge)** is an edge that, if removed, will make some servers unable to reach some other server (i.e. increases the number of connected components in the graph).
 
-You need to find all the **Critical Connections** (Bridges). A bridge is any edge that, if cut, completely splits the graph into two disconnected pieces, isolating some servers from the rest of the network.
-
-**Sample Input:**
-
-```text
-Servers (N) = 4
-Connections = [[0,1], [1,2], [2,0], [1,3]]
-
-```
-
-**Sample Output:**
-
-```text
-[[1,3]]
-
-```
-
-*(Explanation: Servers 0, 1, and 2 form a triangle. If you cut `[0,1]`, server 0 can still talk to 1 via server 2. But if you cut `[1,3]`, server 3 is completely dead to the world. `[1,3]` is a bridge.)*
+Return all critical connections in the network in any order.
 
 ---
 
-### The Paradigm Shift: Time-Stamping (Tarjan's Concept)
+## Constraints
+* `2 <= n <= 10^5`
+* `n - 1 <= connections.length <= 10^5`
+* `0 <= a_i, b_i < n`
+* `a_i != b_i`
+* There are no repeated connections.
+* The graph is connected.
 
-Standard DFS or BFS cannot solve this. A standard `visited` array just tells you "I have been here." To find a bridge, you need to answer a much harder question: *"Is there a secret back-alley route that loops back to where I started?"*
+---
 
-To solve this, we introduce **Time Travel** to our DFS. We equip every node with two stopwatches:
+## Examples
 
-1. **`discovery_time`:** The exact tick of the clock when we first stepped on this node.
-2. **`lowest_time`:** The earliest (lowest) discovery time this node can reach by looking at its neighbors (excluding the parent it just came from).
+### Example 1
+**Input:**
+```text
+n = 4, connections = [[0, 1], [1, 2], [2, 0], [1, 3]]
+```
+**Output:**
+```text
+[[1, 3]]
+```
+**Explanation:**
+- Nodes 0, 1, and 2 form a cycle (triangle). Removing any edge `[0, 1]`, `[1, 2]`, or `[2, 0]` leaves all nodes in the triangle connected.
+- Edge `[1, 3]` is the only link connecting server 3 to the rest of the network. If `[1, 3]` is removed, server 3 is completely disconnected.
+Therefore, `[1, 3]` is the only critical connection (bridge).
 
-**The Logic:**
+```
+(0) --- (1) === [1, 3] === (3)
+ \     /
+  \   /
+   (2)
+```
 
-* You start a DFS, ticking a global clock up by 1 with every step.
-* When Node A visits Node B, Node B looks around for other paths.
-* If Node B finds a "back-edge" (a connection to an already visited node from the past), it updates its `lowest_time` to match that past node's `discovery_time`.
-* **The Bridge Check:** When the DFS steps back from Node B to Node A, Node A asks: *"Hey B, what is the earliest node you can reach?"*
-* If `B's lowest_time <= A's discovery_time`, it means B found a back-alley route! The edge between A and B is safe.
-* If `B's lowest_time > A's discovery_time`, B is trapped. It has absolutely no way back to A or earlier nodes except through the direct A-B cable. **That cable is a bridge.**
+---
 
+### Example 2
+**Input:**
+```text
+n = 2, connections = [[0, 1]]
+```
+**Output:**
+```text
+[[0, 1]]
+```
+
+---
+
+## Algorithmic Approaches
+
+### Tarjan's Bridge-Finding Algorithm (DFS Low-Link & Discovery Time)
+To find bridges in a single $O(V + E)$ DFS pass, track two integer arrays:
+1. `tin[u]`: **Time of insertion** (discovery timestamp) of node $u$.
+2. `low[u]`: **Lowest discovery time** reachable from node $u$ using at most one back-edge.
+
+### Bridge Invariant
+When traversing from node $u$ to adjacent neighbor $v$ (where $v \ne \text{parent}$):
+- **If $v$ is not yet visited:**
+  - Recurse `dfs(v, u)`.
+  - Upon return: `low[u] = min(low[u], low[v])`.
+  - **Bridge Condition:**
+    $$\text{low}[v] > \text{tin}[u]$$
+    *Meaning:* There is no back-edge from $v$ (or any of $v$'s descendants) that can reach $u$ or any ancestor of $u$. The edge $(u, v)$ is the sole lifeline connecting $v$'s subtree to the rest of the graph $\implies$ **$(u, v)$ is a Bridge!**
+- **If $v$ is already visited (Back-Edge):**
+  - Update `low[u] = min(low[u], tin[v])`.
+
+---
+
+## Complexity Analysis
+- **Time Complexity:** $O(V + E)$ — Every vertex and edge is explored exactly once in the DFS traversal.
+- **Space Complexity:** $O(V + E)$ for adjacency list and $O(V)$ for `tin`, `low`, `vis` arrays and recursion call stack.
