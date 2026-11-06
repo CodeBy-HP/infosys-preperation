@@ -2,7 +2,7 @@
 
 Welcome to the **Array Algorithms** paradigm. Arrays are the bedrock of all data structures. While conceptually simple, technical assessments frequently utilize arrays to evaluate **asymptotic optimization, pointer invariants, mathematical deductions, bitwise manipulation, and in-place transformations**.
 
-This sheet organizes **25 high-frequency problems** across **7 core patterns** tested in top-tier coding assessments.
+This sheet organizes **44 high-frequency problems** across **7 core patterns** tested in top-tier coding assessments.
 
 ---
 
@@ -11,6 +11,7 @@ This sheet organizes **25 high-frequency problems** across **7 core patterns** t
 1. **Two Pointers & In-Place Elimination:**
    - **Convergent Pointers:** On sorted arrays, shrink the boundary opposite to the bottleneck ($L++$ or $R--$) in strictly $O(N)$ time.
    - **Reader & Writer Pointers:** For in-place element filtering/compaction, use a slow `writer` pointer that only advances when a valid non-target element is swapped in.
+   - **3-Step Reversal:** For cyclic rotations, inverting $[0 \dots k-1]$, $[k \dots N-1]$, and the entire array achieves $O(N)$ time and $O(1)$ space.
 2. **Prefix Sums & Difference Arrays:**
    - Subarray sums map to prefix differences: $\text{sum}(i \dots j) = \text{prefix}[j] - \text{prefix}[i - 1]$. Hash maps enable $O(1)$ lookup for target sums or remainder congruences.
    - For offline range additions $[L, R, +V]$, apply $O(1)$ boundary markers $+V$ at $L$ and $-V$ at $R + 1$, then take a single prefix sum pass.
@@ -18,24 +19,40 @@ This sheet organizes **25 high-frequency problems** across **7 core patterns** t
    - For sliding window extrema of size $K$, store indices in a `deque` ordered strictly monotonically. Each element enters and exits at most once for $O(N)$ amortized time.
 4. **Kadane's Algorithm & Sign Flips:**
    - For maximum subarray sums, discard negative prefixes: $\text{curr} = \max(\text{num}, \text{curr} + \text{num})$. For products, track both `min` and `max` to handle negative sign flips.
+   - Suffix maximum tracking enables identifying leaders in $O(N)$ time.
 5. **Matrix Invariants ($O(1)$ Auxiliary Space):**
    - Rotating an image $90^\circ$ clockwise equals **Transpose** followed by **Horizontal Row Reversal**.
    - Zeroing matrices in $O(1)$ space uses the 1st row and 1st column as the flag registers.
-6. **Partitioning & Voting:**
+   - Pascal's Triangle utilizes the combinatorial multiplicative formula $\binom{n}{k} = \binom{n}{k-1} \times \frac{n-k+1}{k}$ to generate rows in $O(N)$ time with zero overflow.
+6. **Partitioning, Voting & Divide-and-Conquer:**
    - **Dutch National Flag:** 3-way partitioning dividing an array into $<, ==, >$ regions in a single pass.
    - **Boyer-Moore Voting:** Candidate battle cancellation isolating the majority element in $O(N)$ time and $O(1)$ space.
+   - **Modified Merge Sort Inversions:** Piggybacking on merge sort split-inversion mechanics enables counting inversions ($A[i] > A[j]$) and reverse pairs ($A[i] > 2A[j]$) in $O(N \log N)$ time.
+   - **Gap Method (Knuth Shell-sort):** In-place merging of two disjoint arrays without extra buffer in $O((N + M) \log(N + M))$ time and $O(1)$ space.
 
 ---
 
 ## 1. Two Pointers & In-Place Compaction
-*Focus: Convergent boundary scanning, bottleneck elimination, and reader/writer in-place swapping.*
+*Focus: Convergent boundary scanning, bottleneck elimination, reader/writer swapping, and disjoint merging.*
 
-* **[Problem 1: Two Sum II - Input Array Is Sorted](two_pointers_and_in_place/two_sum_ii_input_array_sorted.md)** ([C++ Code](two_pointers_and_in_place/two_sum_ii_input_array_sorted.cpp)): Convergent two-pointer search on monotonically sorted arrays in $O(N)$ time and $O(1)$ space.
-* **[Problem 2: 3Sum](two_pointers_and_in_place/three_sum.md)** ([C++ Code](two_pointers_and_in_place/three_sum.cpp)): Sorting plus fixed pivot two-pointer search with aggressive duplicate skipping.
-* **[Problem 3: Container With Most Water](two_pointers_and_in_place/container_with_most_water.md)** ([C++ Code](two_pointers_and_in_place/container_with_most_water.cpp)): Proof of shrinking the shorter boundary to optimize $(R - L) \times \min(H_L, H_R)$.
-* **[Problem 4: Move Zeroes](two_pointers_and_in_place/move_zeroes.md)** ([C++ Code](two_pointers_and_in_place/move_zeroes.cpp)): In-place reader and writer pointer swapping preserving relative order of non-zeroes.
-* **[Problem 5: Max Consecutive Ones](two_pointers_and_in_place/max_consecutive_ones.md)** ([C++ Code](two_pointers_and_in_place/max_consecutive_ones.cpp)): Single-pass linear state machine tracking continuous runs.
-* **[Problem 6: Remove Duplicates from Sorted Array](two_pointers_and_in_place/remove_duplicates_from_sorted_array.md)** ([C++ Code](two_pointers_and_in_place/remove_duplicates_from_sorted_array.cpp)): Fast reader and writer two-pointer in-place compaction in $O(N)$ time and $O(1)$ space.
+* **[Linear Search](two_pointers_and_in_place/linear_search.md)** ([C++ Code](two_pointers_and_in_place/linear_search.cpp)): Fundamental single-pass search returning the first occurrence index of a target element in $O(N)$ time and $O(1)$ space.
+* **[Largest Element](two_pointers_and_in_place/largest_element.md)** ([C++ Code](two_pointers_and_in_place/largest_element.cpp)): Single-pass linear scan tracking the running maximum in $O(N)$ time and $O(1)$ space.
+* **[Second Largest Element](two_pointers_and_in_place/second_largest_element.md)** ([C++ Code](two_pointers_and_in_place/second_largest_element.cpp)): Single-pass dual-variable invariant tracking largest and strictly second-largest elements in $O(N)$ time and $O(1)$ space.
+* **[Left Rotate Array by One](two_pointers_and_in_place/left_rotate_by_one.md)** ([C++ Code](two_pointers_and_in_place/left_rotate_by_one.cpp)): In-place shift buffering the head element and sliding remainder leftward in $O(N)$ time and $O(1)$ space.
+* **[Left / Right Rotate Array by K Places](two_pointers_and_in_place/rotate_array_by_k_places.md)** ([C++ Code](two_pointers_and_in_place/rotate_array_by_k_places.cpp)): The optimal 3-step reversal algorithm $((A^R B^R)^R = BA)$ rotating in $O(N)$ time and strictly $O(1)$ auxiliary space.
+* **[Find Missing Number](two_pointers_and_in_place/find_missing_number.md)** ([C++ Code](two_pointers_and_in_place/find_missing_number.cpp)): Isolating missing number in $[0, N]$ using Gauss summation and bitwise XOR self-cancellation in $O(N)$ time and $O(1)$ space.
+* **[Union of Two Sorted Arrays](two_pointers_and_in_place/union_of_two_sorted_arrays.md)** ([C++ Code](two_pointers_and_in_place/union_of_two_sorted_arrays.cpp)): Two-pointer coordinated merge with inline deduplication in $O(N + M)$ time and $O(1)$ auxiliary space.
+* **[Intersection of Two Sorted Arrays](two_pointers_and_in_place/intersection_of_two_sorted_arrays.md)** ([C++ Code](two_pointers_and_in_place/intersection_of_two_sorted_arrays.cpp)): Coordinated two-pointer simultaneous advance collecting distinct common elements in $O(N + M)$ time.
+* **[Rearrange Array Elements by Sign](two_pointers_and_in_place/rearrange_array_by_sign.md)** ([C++ Code](two_pointers_and_in_place/rearrange_array_by_sign.cpp)): Dual-pointer placement directing positive integers to even indices and negative integers to odd indices in $O(N)$ time.
+* **[Two Sum](two_pointers_and_in_place/two_sum.md)** ([C++ Code](two_pointers_and_in_place/two_sum.cpp)): Single-pass complement lookup via hash map returning 0-indexed pairs in $O(N)$ time.
+* **[Two Sum II - Input Array Is Sorted](two_pointers_and_in_place/two_sum_ii_input_array_sorted.md)** ([C++ Code](two_pointers_and_in_place/two_sum_ii_input_array_sorted.cpp)): Convergent two-pointer search on monotonically sorted arrays in $O(N)$ time and $O(1)$ space.
+* **[3Sum](two_pointers_and_in_place/three_sum.md)** ([C++ Code](two_pointers_and_in_place/three_sum.cpp)): Sorting plus fixed pivot two-pointer search with aggressive duplicate skipping in $O(N^2)$ time.
+* **[4Sum](two_pointers_and_in_place/four_sum.md)** ([C++ Code](two_pointers_and_in_place/four_sum.cpp)): Dual fixed pivot iteration combined with convergent two-pointer search and 64-bit overflow guards in $O(N^3)$ time.
+* **[Container With Most Water](two_pointers_and_in_place/container_with_most_water.md)** ([C++ Code](two_pointers_and_in_place/container_with_most_water.cpp)): Proof of shrinking the shorter boundary to optimize $(R - L) \times \min(H_L, H_R)$.
+* **[Move Zeroes](two_pointers_and_in_place/move_zeroes.md)** ([C++ Code](two_pointers_and_in_place/move_zeroes.cpp)): In-place reader and writer pointer swapping preserving relative order of non-zeroes.
+* **[Max Consecutive Ones](two_pointers_and_in_place/max_consecutive_ones.md)** ([C++ Code](two_pointers_and_in_place/max_consecutive_ones.cpp)): Single-pass linear state machine tracking continuous runs.
+* **[Remove Duplicates from Sorted Array](two_pointers_and_in_place/remove_duplicates_from_sorted_array.md)** ([C++ Code](two_pointers_and_in_place/remove_duplicates_from_sorted_array.cpp)): Fast reader and writer two-pointer in-place compaction in $O(N)$ time and $O(1)$ space.
+* **[Merge Two Sorted Arrays Without Extra Space](two_pointers_and_in_place/merge_sorted_arrays_without_extra_space.md)** ([C++ Code](two_pointers_and_in_place/merge_sorted_arrays_without_extra_space.cpp)): Reverse pointer placement for buffered arrays ($O(M+N)$) and Knuth's Shell sort Gap method for disjoint arrays ($O((N+M)\log(N+M))$ time, $O(1)$ space).
 * **[The Data Doubler Algorithm](two_pointers_and_in_place/the_data_doubler.md)** ([C++ Code](two_pointers_and_in_place/the_data_doubler.cpp)): Circular playlist concatenation using $i \pmod n$ traversal in $O(N)$ time.
 * **[Month to Season Mapping](two_pointers_and_in_place/month_to_season_mapping.md)** ([C++ Code](two_pointers_and_in_place/month_to_season_mapping.cpp)): Boundary guard clauses and season interval categorization in $O(1)$ time.
 * **[Minimum Swaps to Make Array Even/Odd](two_pointers_and_in_place/min_swaps_even_odd.md)** ([C++ Code](two_pointers_and_in_place/min_swaps_even_odd.cpp)): Parity segregation via inversion counting and complementary swap theorem: $\text{swaps}(E) + \text{swaps}(O) = E \times O$.
@@ -64,8 +81,9 @@ This sheet organizes **25 high-frequency problems** across **7 core patterns** t
 ---
 
 ## 4. Subarrays & Kadane's Algorithm
-*Focus: Optimal contiguous subarray accumulation, sign flipping, and lexicographical successors.*
+*Focus: Optimal contiguous subarray accumulation, sign flipping, suffix maxima, and lexicographical successors.*
 
+* **[Leaders in an Array](subarrays_and_kadane/leaders_in_an_array.md)** ([C++ Code](subarrays_and_kadane/leaders_in_an_array.cpp)): Backward suffix maximum traversal collecting all dominant elements strictly greater than all elements to their right in $O(N)$ time and $O(1)$ auxiliary space.
 * **[Problem 13: Maximum Subarray (Kadane's)](subarrays_and_kadane/maximum_subarray.md)** ([C++ Code](subarrays_and_kadane/maximum_subarray.cpp)): Kadane's dynamic programming reset rule discarding negative accumulated prefixes.
 * **[Problem 14: Maximum Product Subarray](subarrays_and_kadane/maximum_product_subarray.md)** ([C++ Code](subarrays_and_kadane/maximum_product_subarray.cpp)): Dual tracking of both `min` and `max` products to handle negative sign inversions.
 * **[Problem 15: Next Permutation](subarrays_and_kadane/next_permutation.md)** ([C++ Code](subarrays_and_kadane/next_permutation.cpp)): 3-step pivot detection, smallest larger element swap, and suffix inversion.
@@ -76,20 +94,26 @@ This sheet organizes **25 high-frequency problems** across **7 core patterns** t
 ---
 
 ## 5. Matrix & 2D Arrays
-*Focus: 2D spatial transformations, boundary contractions, and register reutilization.*
+*Focus: 2D spatial transformations, boundary contractions, register reutilization, and Pascal's triangles.*
 
+* **[Pascal's Triangle (Row 1 to NumRows)](matrix_and_2d_arrays/pascals_triangle.md)** ([C++ Code](matrix_and_2d_arrays/pascals_triangle.cpp)): Generating full Pascal's triangle of size $N$ in $O(N^2)$ time and $O(N^2)$ auxiliary space.
+* **[Pascal's Triangle II (k-th Row Generation)](matrix_and_2d_arrays/pascals_triangle_ii.md)** ([C++ Code](matrix_and_2d_arrays/pascals_triangle_ii.cpp)): In-place backward accumulation or $O(K)$ combinatorial multiplicative progression $\binom{n}{k} = \binom{n}{k-1} \times \frac{n-k+1}{k}$ in $O(K)$ space.
+* **[Pascal's Triangle III (Single Element at Row R, Col C)](matrix_and_2d_arrays/pascals_triangle_element.md)** ([C++ Code](matrix_and_2d_arrays/pascals_triangle_element.cpp)): Combinatorial formula calculation $\binom{r-1}{c-1}$ in $O(C)$ time and $O(1)$ space with zero intermediate overflow.
 * **[Problem 17: Rotate Image](matrix_and_2d_arrays/rotate_image.md)** ([C++ Code](matrix_and_2d_arrays/rotate_image.cpp)): In-place $90^\circ$ clockwise rotation via Matrix Transpose + Horizontal Reflection.
 * **[Problem 18: Spiral Matrix](matrix_and_2d_arrays/spiral_matrix.md)** ([C++ Code](matrix_and_2d_arrays/spiral_matrix.cpp)): 4-boundary shrinking loop traversing boundaries `top`, `bottom`, `left`, `right`.
 * **[Problem 19: Set Matrix Zeroes](matrix_and_2d_arrays/set_matrix_zeroes.md)** ([C++ Code](matrix_and_2d_arrays/set_matrix_zeroes.cpp)): Using the 1st row and 1st column as bit registers for strictly $O(1)$ auxiliary space.
 
 ---
 
-## 6. Partitioning & Voting
-*Focus: Multi-way array partitioning and majority consensus algorithms.*
+## 6. Partitioning, Voting & Divide-and-Conquer
+*Focus: Multi-way array partitioning, majority consensus, bitwise algebra, and merge-sort inversions.*
 
 * **[Problem 20: Sort Colors / Dutch National Flag](partitioning_and_voting/sort_colors.md)** ([C++ Code](partitioning_and_voting/sort_colors.cpp)): 3-way pointer partitioning (`low`, `mid`, `high`) sorting $\{0, 1, 2\}$ in a single pass.
 * **[Problem 21: Majority Element](partitioning_and_voting/majority_element.md)** ([C++ Code](partitioning_and_voting/majority_element.cpp)): Boyer-Moore voting algorithm finding elements appearing $> \lfloor n / 2 \rfloor$ times.
 * **[Problem 22: Majority Element II](partitioning_and_voting/majority_element_ii.md)** ([C++ Code](partitioning_and_voting/majority_element_ii.cpp)): Extended Boyer-Moore tracking at most two survivors appearing $> \lfloor n / 3 \rfloor$ times.
+* **[Find the Repeating and Missing Number](partitioning_and_voting/find_repeating_and_missing_number.md)** ([C++ Code](partitioning_and_voting/find_repeating_and_missing_number.cpp)): Dual optimal strategies: Mathematical equation system ($S - S_n$ and $S^2 - S_n^2$) and Bitwise XOR bucket partitioning in $O(N)$ time and $O(1)$ auxiliary space.
+* **[Count Inversions](partitioning_and_voting/count_inversions.md)** ([C++ Code](partitioning_and_voting/count_inversions.cpp)): Counting split inversions $(i < j \land A[i] > A[j])$ via modified divide-and-conquer Merge Sort in $O(N \log N)$ time.
+* **[Reverse Pairs](partitioning_and_voting/reverse_pairs.md)** ([C++ Code](partitioning_and_voting/reverse_pairs.cpp)): Pre-merge pointer count step for $A[i] > 2 \cdot A[j]$ combined with standard Merge Sort in $O(N \log N)$ time.
 
 ---
 
@@ -98,4 +122,3 @@ This sheet organizes **25 high-frequency problems** across **7 core patterns** t
 
 * **[Problem 23: Maximum Cyclic Prefix XOR Sum](bitwise_and_cyclic_arrays/max_cyclic_prefix_xor_sum.md)** ([C++ Code](bitwise_and_cyclic_arrays/max_cyclic_prefix_xor_sum.cpp)): Cyclic array expansion and prefix XOR evaluation across forward and backward traversals.
 * **[Problem 24: Single Number II](bitwise_and_cyclic_arrays/single_number_ii.md)** ([C++ Code](bitwise_and_cyclic_arrays/single_number_ii.cpp)): Bitwise summation modulo 3 isolating a unique element among triplets in $O(1)$ space.
-
