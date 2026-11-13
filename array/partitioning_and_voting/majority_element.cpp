@@ -11,18 +11,33 @@ public:
     // Space Complexity: O(1)
     // =========================================================================
     int majorityElement(const vector<int>& nums) {
-        int candidate = nums[0];
-        int count = 0;
+    // Phase 1: Find a candidate
+    int candidate = nums[0];
+    int count = 0;
 
-        for (int num : nums) {
-            if (count == 0) {
-                candidate = num;
-            }
-            count += (num == candidate) ? 1 : -1;
+    for (int num : nums) {
+        if (count == 0) {
+            candidate = num;
         }
-
-        return candidate;
+        count += (num == candidate) ? 1 : -1;
     }
+
+    // Phase 2: Verify the candidate
+    int actualCount = 0;
+    for (int num : nums) {
+        if (num == candidate) {
+            actualCount++;
+        }
+    }
+
+    // Check if it actually appears more than N/2 times
+    if (actualCount > nums.size() / 2) {
+        return candidate;
+    } 
+
+    // Return a default value or throw an error if no majority exists
+    return -1; 
+}
 };
 
 int main() {

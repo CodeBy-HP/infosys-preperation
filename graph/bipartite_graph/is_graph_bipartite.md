@@ -1,68 +1,101 @@
-We have conquered grid traversals and directed dependency graphs (Topological Sort). The next major paradigm in graph theory is **Graph Partitioning and Coloring**.
+# Is Graph Bipartite? (LeetCode 785)
 
-### Problem 10: Is Graph Bipartite?
+## Problem Statement
+There is an **undirected graph** with `n` nodes, where each node is numbered between `0` and `n - 1`. You are given a 2D array `graph`, where `graph[u]` is an array of nodes that node `u` is adjacent to.
 
-**Problem Statement:**
-You are given an undirected graph. You need to figure out if the graph is **Bipartite**.
+A graph is **bipartite** if the nodes can be partitioned into two independent sets `A` and `B` such that every edge in the graph connects a node in set `A` and a node in set `B`.
 
-A graph is Bipartite if you can split all its nodes into two independent sets (let's call them Group A and Group B) such that **every single edge** in the graph connects a node in Group A to a node in Group B.
-
-A simpler way to think about it: Imagine you have two paint colors (Red and Blue). Can you paint every node in the graph so that **no two adjacent nodes have the same color**?
-
-**Sample Input 1:**
-
-```text
-Graph: 
-0 --- 1
-|     |
-3 --- 2
-
-```
-
-**Sample Output 1:**
-
-```text
-true
-
-```
-
-*(Explanation: Paint 0 Red. Its neighbors (1 and 3) must be Blue. Node 2 is a neighbor of 1 and 3, so it must be Red. No two connected nodes share a color. It works!)*
-
-**Sample Input 2:**
-
-```text
-Graph:
-0 --- 1
- \   /
-   2
-
-```
-
-**Sample Output 2:**
-
-```text
-false
-
-```
-
-*(Explanation: Paint 0 Red. Its neighbors (1 and 2) must be Blue. But wait! 1 and 2 are connected to each other! If they are both Blue, they violate the rule. It is impossible to color a triangle with only 2 colors.)*
+Return `true` if and only if it is **bipartite**.
 
 ---
 
-### The Underlying Secret: Odd-Length Cycles
+## Constraints
+* `graph.length == n`
+* `1 <= n <= 100`
+* `0 <= graph[u].length < n`
+* `0 <= graph[u][i] <= n - 1`
+* `graph[u]` does not contain `u` (no self-loops).
+* All the values of `graph[u]` are **unique**.
+* The graph is undirected (if `v` is in `graph[u]`, then `u` is in `graph[v]`).
+* The graph may be disconnected into multiple components.
 
-This problem teaches a fundamental rule of graph theory: **A graph is Bipartite if and only if it does NOT contain a cycle of odd length.**
+---
 
-* A cycle of length 4 (a square) can alternate: Red-Blue-Red-Blue.
-* A cycle of length 3 (a triangle) alternates: Red-Blue-Red... and crashes because the last Red touches the first Red.
+## Examples
 
-### How do we solve it? (The Alternating BFS/DFS)
+### Example 1
+**Input:**
+```text
+graph = [
+  [1, 2, 3],
+  [0, 2],
+  [0, 1, 3],
+  [0, 2]
+]
+```
+**Output:**
+```text
+false
+```
+**Explanation:**
+Nodes 0, 1, and 2 form a triangle (an odd-length cycle of length 3):
+- If node 0 is colored Red, then node 1 must be Blue and node 2 must be Blue.
+- But an edge exists between 1 and 2, which both share the color Blue!
+Thus, the graph cannot be 2-colored.
 
-Instead of a standard `visited` array tracking `true/false`, we upgrade to a `color` array tracking `0 (Red)`, `1 (Blue)`, and `-1 (Uncolored)`.
+```
+      (0) [Red]
+     /   \
+    /     \
+[Blue] (1)---(2) [Blue]  <--- Conflict! Edge connects two Blue nodes!
+```
 
-You can use either BFS or DFS. The logic is identical to a contagious alternating virus:
+---
 
-1. Start at an uncolored node and paint it `0 (Red)`.
-2. Look at all its neighbors.
-3. If a neighbor is uncolored, paint it the **opposite** color (`1 - current_color`) and add it to your queue/stack.
-4. If a neighbor is *already* colored, check its color. If it has the **exact same color** as your current node, the alarm bells ring—return `false`.
+### Example 2
+**Input:**
+```text
+graph = [
+  [1, 3],
+  [0, 2],
+  [1, 3],
+  [0, 2]
+]
+```
+**Output:**
+```text
+true
+```
+**Explanation:**
+The nodes form an even-length square cycle: `0 - 1 - 2 - 3 - 0`.
+Set A = {0, 2} (Red), Set B = {1, 3} (Blue). Every edge connects a node in Set A to Set B.
+
+---
+
+## Algorithmic Approaches
+
+### The Fundamental Bipartite Theorem
+A graph is bipartite **if and only if it contains NO odd-length cycle**.
+This can be validated via **2-Coloring (BFS or DFS)**:
+
+### 2-Coloring via BFS
+1. Maintain a `color` array of size $n$, initialized to `-1` (uncolored).
+2. For each node $i \in [0, n - 1]$ (to cover all disconnected components):
+   - If `color[i] == -1`:
+     - Assign `color[i] = 0`.
+     - Push `i` into BFS queue.
+     - While queue is non-empty:
+       - Pop `curr`.
+       - For each neighbor `next` of `curr`:
+         - If `color[next] == -1`:
+           - Assign opposite color: `color[next] = 1 - color[curr]`.
+           - Push `next` into queue.
+         - Else if `color[next] == color[curr]`:
+           - Two adjacent nodes share the same color $\longrightarrow$ **Odd cycle exists, return `false`!**
+3. Return `true` if all nodes are successfully 2-colored.
+
+---
+
+## Complexity Analysis
+- **Time Complexity:** $O(V + E)$ — Each node and edge is inspected once during the 2-coloring traversal.
+- **Space Complexity:** $O(V)$ — `color` array and BFS queue or recursion stack.

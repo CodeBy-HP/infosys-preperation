@@ -5,20 +5,32 @@ using namespace std;
 
 class SetMatrixZeroes {
 public:
-    // =========================================================================
-    // 1. In-Place 1st Row & 1st Col Flagging
-    // Time Complexity: O(M * N)
-    // Space Complexity: O(1)
-    // =========================================================================
     void setZeroes(vector<vector<int>>& matrix) {
-        int m = matrix.size();
-        int n = matrix[0].size();
+        int n = matrix.size();
+        int m = matrix[0].size();
+        
+        bool firstRowZero = false;
         bool firstColZero = false;
 
-        // Step 1: Record zero flags in 1st row and 1st column
-        for (int r = 0; r < m; r++) {
-            if (matrix[r][0] == 0) firstColZero = true;
-            for (int c = 1; c < n; c++) {
+        // 1. Check if first column has any zeros
+        for (int r = 0; r < n; r++) {
+            if (matrix[r][0] == 0) {
+                firstColZero = true;
+                break;
+            }
+        }
+
+        // 2. Check if first row has any zeros
+        for (int c = 0; c < m; c++) {
+            if (matrix[0][c] == 0) {
+                firstRowZero = true;
+                break;
+            }
+        }
+
+        // 3. Traverse the inner matrix and use first row/col as flags
+        for (int r = 1; r < n; r++) {
+            for (int c = 1; c < m; c++) {
                 if (matrix[r][c] == 0) {
                     matrix[r][0] = 0;
                     matrix[0][c] = 0;
@@ -26,23 +38,27 @@ public:
             }
         }
 
-        // Step 2: Use flags to set inner cells to zero
-        for (int r = 1; r < m; r++) {
-            for (int c = 1; c < n; c++) {
+        // 4. Zero out inner matrix based on flags
+        for (int r = 1; r < n; r++) {
+            for (int c = 1; c < m; c++) {
                 if (matrix[r][0] == 0 || matrix[0][c] == 0) {
                     matrix[r][c] = 0;
                 }
             }
         }
 
-        // Step 3: Zero first row if flagged
-        if (matrix[0][0] == 0) {
-            for (int c = 0; c < n; c++) matrix[0][c] = 0;
+        // 5. Zero out the first row if needed
+        if (firstRowZero) {
+            for (int c = 0; c < m; c++) {
+                matrix[0][c] = 0;
+            }
         }
 
-        // Step 4: Zero first column if flagged
+        // 6. Zero out the first column if needed
         if (firstColZero) {
-            for (int r = 0; r < m; r++) matrix[r][0] = 0;
+            for (int r = 0; r < n; r++) {
+                matrix[r][0] = 0;
+            }
         }
     }
 };

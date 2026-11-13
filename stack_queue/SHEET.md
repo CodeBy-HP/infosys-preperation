@@ -50,6 +50,7 @@ Per requirements, this repository explicitly separates problems into dedicated *
 * **[Problem 7: Minimum Remove to Make Valid Parentheses](stack/parentheses_and_parsing/min_remove_to_make_valid_parentheses.md)** ([C++ Code](stack/parentheses_and_parsing/min_remove_to_make_valid_parentheses.cpp)): Index-tracking stack isolating unmatched brackets for $O(N)$ in-place character filtering.
 * **[Problem 8: Evaluate Reverse Polish Notation](stack/parentheses_and_parsing/evaluate_reverse_polish_notation.md)** ([C++ Code](stack/parentheses_and_parsing/evaluate_reverse_polish_notation.cpp)): Postfix expression evaluation popping operands for binary arithmetic operations.
 * **[Problem 9: Basic Calculator II](stack/parentheses_and_parsing/basic_calculator_ii.md)** ([C++ Code](stack/parentheses_and_parsing/basic_calculator_ii.cpp)): Operator precedence parser evaluating `*` and `/` eagerly and deferring `+` and `-` with $O(1)$ space optimization.
+* **[Problem 10: Bracket Balance Cost](stack/parentheses_and_parsing/bracket_balance_cost.md)** ([C++ Code](stack/parentheses_and_parsing/bracket_balance_cost.cpp)): Minimum insertion cost to balance bracket sequence modulo $10^9 + 7$ via greedy deficit tracking.
 
 ---
 
@@ -104,6 +105,7 @@ Per requirements, this repository explicitly separates problems into dedicated *
 | **Stack** | [Min Remove Valid Parentheses](stack/parentheses_and_parsing/min_remove_to_make_valid_parentheses.md) | $O(N)$ | $O(N)$ | Index tracking stack + two-pass filter |
 | **Stack** | [Evaluate RPN](stack/parentheses_and_parsing/evaluate_reverse_polish_notation.md) | $O(N)$ | $O(N)$ | Postfix arithmetic stack evaluation |
 | **Stack** | [Basic Calculator II](stack/parentheses_and_parsing/basic_calculator_ii.md) | $O(N)$ | $O(1)$ | Operator precedence and intermediate sum |
+| **Stack** | [Bracket Balance Cost](stack/parentheses_and_parsing/bracket_balance_cost.md) | $O(N)$ | $O(1)$ | Greedy deficit tracking modulo $10^9+7$ |
 | **Stack** | [Min Stack](stack/design_and_simulation/min_stack.md) | $O(1)$ | $O(N)$ | Auxiliary stack / pair storing minimums |
 | **Stack** | [Implement Queue using Stacks](stack/design_and_simulation/implement_queue_using_stacks.md) | $O(1)$ amortized | $O(N)$ | Dual stack lazy transfer |
 | **Stack** | [Asteroid Collision](stack/design_and_simulation/asteroid_collision.md) | $O(N)$ | $O(N)$ | Directional sign cancellation simulation |

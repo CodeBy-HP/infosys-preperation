@@ -12,11 +12,20 @@ Focus: Overcoming the static array query vs. update bottleneck.
 
 ---
 
-## 2. Prefix Trees (Trie)
-Focus: Compressing associative string dictionaries and multi-word simultaneous search.
+## 2. Prefix Trees & Bitwise Tries
+Focus: Compressing associative string dictionaries, substring frequency counting, and bitwise XOR maximization.
 
-* **[Implement Trie (Prefix Tree)](trie/implement_trie.md)** ([C++ Code](trie/implement_trie.cpp)): Alphabet-guided tree supporting `insert`, `search`, `startsWith`, and recursive memory reclamation (`remove`). Provides both contiguous 26-pointer array and hash map implementations.
-* **[Word Search II](trie/word_search_ii.md)** ([C++ Code](trie/word_search_ii.cpp)): Finding all dictionary words on an $M \times N$ grid simultaneously via Trie-guided DFS with backtracking and in-situ dead-end branch pruning.
+> [!NOTE]
+> The comprehensive master index with all 8 Trie topics, bitwise prerequisites, and implementations is available in **[Trie Master Sheet](trie/SHEET.md)**.
+
+* **[Bit Manipulation Prerequisites for Trie](trie/theory_and_fundamentals/bit_prerequisites_for_trie.md)**: Bitwise operators, extracting bits, and the greedy opposite-bit XOR maximization invariant.
+* **[Implement Trie I](trie/theory_and_fundamentals/trie_implementation_i.md)** ([C++ Code](trie/theory_and_fundamentals/trie_implementation_i.cpp)): Core Trie supporting `insert`, `search`, and `startsWith`.
+* **[Implement Trie II](trie/theory_and_fundamentals/trie_implementation_ii.md)** ([C++ Code](trie/theory_and_fundamentals/trie_implementation_ii.cpp)): Frequency tracking Trie with `countWordsEqualTo`, `countWordsStartingWith`, and `erase`.
+* **[Longest Word with All Prefixes](trie/string_problems/longest_word_with_all_prefixes.md)** ([C++ Code](trie/string_problems/longest_word_with_all_prefixes.cpp)): Complete string verification via Trie prefix path validation.
+* **[Number of Distinct Substrings](trie/string_problems/number_of_distinct_substrings.md)** ([C++ Code](trie/string_problems/number_of_distinct_substrings.cpp)): Converting substring generation to suffix-prefix node insertion in $O(N^2)$ time.
+* **[Word Search II](trie/string_problems/word_search_ii.md)** ([C++ Code](trie/string_problems/word_search_ii.cpp)): Finding all dictionary words on an $M \times N$ grid simultaneously via Trie-guided DFS with dead-end branch pruning.
+* **[Maximum XOR of Two Numbers](trie/bitwise_trie/maximum_xor_of_two_numbers.md)** ([C++ Code](trie/bitwise_trie/maximum_xor_of_two_numbers.cpp)): 32-bit Binary Trie with greedy opposite-bit branching in $O(32N) = O(N)$ time.
+* **[Maximum XOR with an Element](trie/bitwise_trie/maximum_xor_with_an_element.md)** ([C++ Code](trie/bitwise_trie/maximum_xor_with_an_element.cpp)): Offline query processing: sorting queries by upper bound $m_i$ and monotonic Trie insertion.
 
 ---
 

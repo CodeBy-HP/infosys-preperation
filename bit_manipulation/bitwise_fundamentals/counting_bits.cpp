@@ -20,6 +20,33 @@ public:
         }
         return dp;
     }
+
+    // Approach 3: O(log n)
+    // Helper to find the highest power of 2 less than or equal to n
+    int getHighestPowerOf2(int n) {
+        int x = 0;
+        while ((1 << x) <= n) {
+            x++;
+        }
+        return x - 1;
+    }
+
+    int countSetBits(int n) {
+        if (n <= 0) return 0;
+
+        int x = getHighestPowerOf2(n);
+
+        // 1. Bits up to 2^x - 1
+        int bitsUpTo2x = x * (1 << (x - 1)); 
+
+        // 2. MSBs from 2^x to n
+        int msbFrom2xToN = n - (1 << x) + 1; 
+
+        // 3. Remaining bits (recursive call)
+        int rest = n - (1 << x); 
+
+        return bitsUpTo2x + msbFrom2xToN + countSetBits(rest);
+    }
 };
 
 
