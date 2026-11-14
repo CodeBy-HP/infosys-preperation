@@ -48,6 +48,8 @@ Explanation:
 
 This is the canonical decision-making model of the **0/1 Knapsack** family.
 
+![alt text](image.png)
+
 ### 1. State Definition
 Let $dp[i][target]$ be a boolean value indicating whether a subset formed from the first $i$ elements `arr[0 ... i - 1]` can achieve a sum of $target$.
 

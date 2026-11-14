@@ -1,109 +1,86 @@
-#include <iostream>
-#include <vector>
-#include <numeric>
+// Partition Equal Subset Sum (LeetCode 416)
 
+#include <bits/stdc++.h>
 using namespace std;
 
-class PartitionEqualSubsetSum {
+class Solution {
 public:
-    // =========================================================================
-    // 1. Top-Down Approach (Recursion + Memoization)
-    // Time Complexity: O(N * Target)
-    // Space Complexity: O(N * Target)
-    // =========================================================================
-    bool canPartitionMemo(const vector<int>& nums) {
-        int totalSum = accumulate(nums.begin(), nums.end(), 0);
-        if (totalSum % 2 != 0) return false;
-
-        int target = totalSum / 2;
-        int n = nums.size();
-        vector<vector<int>> memo(n, vector<int>(target + 1, -1));
-
-        return solveMemo(n - 1, target, nums, memo);
+    // Approach 1: Recursive DP with Memoization
+    // Reduce to subset sum problem: find if subset with sum = totalSum/2 exists
+    
+    int n, target;
+    vector<int> nums;
+    int dp[205][20005];
+    
+    bool solve(int idx, int sum) {
+        // Base case: target sum achieved
+        if (sum == 0) return true;
+        
+        // Base case: no elements left or invalid sum
+        if (idx >= n || sum < 0) return false;
+        
+        // Memoization check
+        if (dp[idx][sum] != -1) return dp[idx][sum];
+        
+        // Option 1: Don't take current element
+        bool notTake = solve(idx + 1, sum);
+        
+        // Option 2: Take current element
+        bool take = solve(idx + 1, sum - nums[idx]);
+        
+        return dp[idx][sum] = (take || notTake);
     }
-
-private:
-    bool solveMemo(int i, int target, const vector<int>& nums, vector<vector<int>>& memo) {
-        if (target == 0) return true;
-        if (i < 0 || target < 0) return false;
-
-        if (memo[i][target] != -1) return memo[i][target];
-
-        bool notPick = solveMemo(i - 1, target, nums, memo);
-        bool pick = false;
-        if (target >= nums[i]) {
-            pick = solveMemo(i - 1, target - nums[i], nums, memo);
-        }
-
-        return memo[i][target] = (pick || notPick);
-    }
-
-public:
-    // =========================================================================
-    // 2. Bottom-Up Approach (2D Tabulation)
-    // Time Complexity: O(N * Target)
-    // Space Complexity: O(N * Target)
-    // =========================================================================
-    bool canPartitionTabulation(const vector<int>& nums) {
-        int totalSum = accumulate(nums.begin(), nums.end(), 0);
+    
+    bool canPartition(vector<int>& nums) {
+        int totalSum = 0;
+        for (int num : nums) totalSum += num;
+        
+        // If total sum is odd, cannot partition equally
         if (totalSum % 2 != 0) return false;
-
-        int target = totalSum / 2;
-        int n = nums.size();
-        vector<vector<bool>> dp(n, vector<bool>(target + 1, false));
-
-        for (int i = 0; i < n; i++) dp[i][0] = true;
-        if (nums[0] <= target) dp[0][nums[0]] = true;
-
-        for (int i = 1; i < n; i++) {
-            for (int j = 1; j <= target; j++) {
-                bool notPick = dp[i - 1][j];
-                bool pick = (j >= nums[i]) ? dp[i - 1][j - nums[i]] : false;
-                dp[i][j] = notPick || pick;
-            }
-        }
-
-        return dp[n - 1][target];
+        
+        this->nums = nums;
+        this->n = nums.size();
+        this->target = totalSum / 2;
+        memset(dp, -1, sizeof(dp));
+        
+        return solve(0, target);
     }
-
-    // =========================================================================
-    // 3. Space-Optimized Approach (1D Array with Backwards Loop)
-    // Time Complexity: O(N * Target)
-    // Space Complexity: O(Target)
-    // =========================================================================
-    bool canPartitionSpaceOptimized(const vector<int>& nums) {
-        int totalSum = accumulate(nums.begin(), nums.end(), 0);
+    
+    // Approach 2: Space-Optimized 1D DP
+    bool canPartitionOptimized(vector<int>& nums) {
+        int totalSum = 0;
+        for (int num : nums) totalSum += num;
+        
         if (totalSum % 2 != 0) return false;
-
+        
         int target = totalSum / 2;
         vector<bool> dp(target + 1, false);
         dp[0] = true;
-
+        
         for (int num : nums) {
-            // Loop backwards to ensure 0/1 (at most single use) semantics
             for (int j = target; j >= num; j--) {
                 dp[j] = dp[j] || dp[j - num];
             }
-            if (dp[target]) return true;
         }
-
+        
         return dp[target];
     }
 };
 
 int main() {
-    PartitionEqualSubsetSum solver;
-
-    vector<int> test1 = {1, 5, 11, 5};
-    cout << "Test 1 [1, 5, 11, 5]:\n";
-    cout << "  Memoization:     " << (solver.canPartitionMemo(test1) ? "true" : "false") << "\n";
-    cout << "  Tabulation:      " << (solver.canPartitionTabulation(test1) ? "true" : "false") << "\n";
-    cout << "  Space-Optimized: " << (solver.canPartitionSpaceOptimized(test1) ? "true" : "false") << " (Expected: true)\n";
-
-    vector<int> test2 = {1, 2, 3, 5};
-    cout << "Test 2 [1, 2, 3, 5]:\n";
-    cout << "  Space-Optimized: " << (solver.canPartitionSpaceOptimized(test2) ? "true" : "false") << " (Expected: false)\n";
-
+    Solution sol;
+    
+    // Test case 1
+    vector<int> nums1 = {1, 5, 11, 5};
+    cout << "Test 1: " << (sol.canPartition(nums1) ? "true" : "false") << endl; // Expected: true
+    
+    // Test case 2
+    vector<int> nums2 = {1, 2, 3, 5};
+    cout << "Test 2: " << (sol.canPartition(nums2) ? "true" : "false") << endl; // Expected: false
+    
+    // Test case 3
+    vector<int> nums3 = {1, 2, 5};
+    cout << "Test 3: " << (sol.canPartition(nums3) ? "true" : "false") << endl; // Expected: false
+    
     return 0;
 }
-
