@@ -1,91 +1,136 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <climits>
+// Maximum Score with Trigger-Based Subsequence Earnings
+// Trigger-based reward system: every k-th item collected triggers double value for next item
+
+#include <bits/stdc++.h>
+using namespace std;
 
 class Solution {
 public:
-    long long maxTriggerSubsequenceScore(const std::vector<int>& nums, int k) {
-        int n = nums.size();
-        const long long NEG_INF = -1e18;
-
-        // dp[state]:
-        // state 0: 0 items picked
-        // state 1..(k-1): count % k == state
-        // state k: count > 0 and count % k == 0 (checkpoint hit!)
-        std::vector<long long> dp(k + 1, NEG_INF);
-        dp[0] = 0; // 0 earnings with 0 items
-
-        for (int x : nums) {
-            std::vector<long long> next_dp = dp; // Choice 1: Skip x
-
-            // Choice 2: Pick x from each reachable state
-            for (int s = 0; s <= k; ++s) {
-                if (dp[s] == NEG_INF) continue;
-
-                // Determine multiplier and next state
-                long long gain = 0;
-                int next_s = 0;
-
-                if (s == 0) {
-                    // First item picked: multiplier 1
-                    gain = x;
-                    next_s = (k == 1 ? 1 : 1);
-                } else if (s == k) {
-                    // Item immediately after checkpoint: multiplier 2!
-                    gain = 2LL * x;
-                    next_s = (k == 1 ? 1 : 1);
-                } else {
-                    // Normal item: multiplier 1
-                    gain = x;
-                    if (s + 1 == k) {
-                        next_s = k; // Checkpoint reached
-                    } else {
-                        next_s = s + 1;
-                    }
-                }
-
-                next_dp[next_s] = std::max(next_dp[next_s], dp[s] + gain);
+    // Approach 1: Recursive DP with Memoization
+    // State: dp[i][count_mod_k] = max earnings from index i onwards
+    // count_mod_k = number of items picked so far modulo k
+    // Special handling when count_mod_k == 0 and count > 0 (trigger checkpoint reached)
+    
+    int n, k;
+    vector<int> nums;
+    map<pair<int, int>, int> memo;
+    
+    int solve(int idx, int countMod) {
+        // Base case: processed all elements
+        if (idx >= n) return 0;
+        
+        // Memoization check
+        auto key = make_pair(idx, countMod);
+        if (memo.find(key) != memo.end()) return memo[key];
+        
+        // Option 1: Skip current element
+        int skip = solve(idx + 1, countMod);
+        
+        // Option 2: Take current element
+        int value = nums[idx];
+        int nextMod;
+        
+        // Determine if this pick gets double value
+        // Double value happens when countMod == 0 AND we've already picked at least one item
+        // But we track state differently: countMod represents items picked % k
+        // When countMod == k (special state), next item gets doubled
+        
+        if (countMod == k) {
+            // Just triggered a checkpoint, next item gets doubled
+            value = 2 * nums[idx];
+            nextMod = (k == 1) ? k : 1;
+        } else if (countMod == 0) {
+            // First item or regular state
+            value = nums[idx];
+            nextMod = (k == 1) ? k : 1;
+        } else {
+            // Regular pick
+            value = nums[idx];
+            nextMod = countMod + 1;
+            if (nextMod == k) {
+                nextMod = k; // Reached checkpoint
             }
-
-            dp = std::move(next_dp);
         }
-
-        // The answer can be any non-empty subsequence (or 0 if all items are negative)
-        long long maxScore = 0;
-        for (int s = 0; s <= k; ++s) {
-            maxScore = std::max(maxScore, dp[s]);
+        
+        int take = value + solve(idx + 1, nextMod);
+        
+        return memo[key] = max(skip, take);
+    }
+    
+    int maxScore(vector<int>& nums, int k) {
+        this->nums = nums;
+        this->n = nums.size();
+        this->k = k;
+        memo.clear();
+        return solve(0, 0); // Start from index 0, 0 items picked
+    }
+    
+    // Approach 2: Iterative DP with state machine (k+1 states)
+    int maxScoreIterative(vector<int>& nums, int k) {
+        int n = nums.size();
+        
+        // dp[state] = max earnings with 'state' items picked mod k
+        // state k+1 special: just triggered checkpoint, next item doubles
+        vector<int> dp(k + 2, INT_MIN);
+        dp[0] = 0; // Start state: 0 items picked
+        
+        for (int val : nums) {
+            vector<int> newDp = dp;
+            
+            // Try taking current element from each state
+            for (int state = 0; state <= k + 1; state++) {
+                if (dp[state] == INT_MIN) continue;
+                
+                int value = val;
+                int nextState;
+                
+                if (state == 0) {
+                    // First pick
+                    value = val;
+                    nextState = (k == 1) ? k : 1;
+                } else if (state == k) {
+                    // Just reached checkpoint, next gets doubled
+                    value = 2 * val;
+                    nextState = (k == 1) ? k : 1;
+                } else if (state < k - 1) {
+                    // Regular state
+                    value = val;
+                    nextState = state + 1;
+                } else { // state == k - 1
+                    // About to reach checkpoint
+                    value = val;
+                    nextState = k;
+                }
+                
+                newDp[nextState] = max(newDp[nextState], dp[state] + value);
+            }
+            
+            dp = newDp;
         }
-
-        return maxScore;
+        
+        int result = 0;
+        for (int state = 0; state <= k + 1; state++) {
+            result = max(result, dp[state]);
+        }
+        
+        return result;
     }
 };
 
 int main() {
     Solution sol;
-
-    // Test 1: [10, 20, 30, 40], k = 2
-    // Pick 10 (normal), 20 (checkpoint), 30 (double=60), 40 (checkpoint)
-    // 10 + 20 + 60 + 40 = 130
-    std::vector<int> nums1 = {10, 20, 30, 40};
-    int k1 = 2;
-    std::cout << "Test 1 [10, 20, 30, 40], k=2: " 
-              << sol.maxTriggerSubsequenceScore(nums1, k1) << " (Expected: 130)\n";
-
-    // Test 2: Negative elements that shouldn't be picked unless beneficial
-    std::vector<int> nums2 = {-5, 10, -2, 50};
-    int k2 = 2;
-    std::cout << "Test 2 [-5, 10, -2, 50], k=2: " 
-              << sol.maxTriggerSubsequenceScore(nums2, k2) << " (Expected: 108)\n";
-    // Explanation: Pick 10 (1st, 10), -2 (2nd, checkpoint, -2), 50 (3rd, double=100) -> 108!
-
-    // Test 3: k = 1 (every item is a checkpoint, so item 2, 3, 4 are all doubles!)
-    std::vector<int> nums3 = {5, 10, 15};
-    int k3 = 1;
-    std::cout << "Test 3 [5, 10, 15], k=1:      " 
-              << sol.maxTriggerSubsequenceScore(nums3, k3) << " (Expected: 55)\n";
-    // 5 + 2*10 + 2*15 = 5 + 20 + 30 = 55
-
+    
+    // Test case 1
+    vector<int> nums1 = {10, 20, 30, 40};
+    cout << "Test 1: " << sol.maxScore(nums1, 2) << endl; // Expected: 130
+    
+    // Test case 2
+    vector<int> nums2 = {1, 2, 3, 4, 5};
+    cout << "Test 2: " << sol.maxScore(nums2, 2) << endl;
+    
+    // Test case 3
+    vector<int> nums3 = {5, -3, 8, -2, 10};
+    cout << "Test 3: " << sol.maxScore(nums3, 3) << endl;
+    
     return 0;
 }
-
