@@ -1,59 +1,87 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <cassert>
+// 0/1 Knapsack Problem (GFG)
 
-class Knapsack01 {
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
 public:
-    // Approach 1: 2D Tabulation - O(N * W) Time, O(N * W) Space
-    static int knapSack2D(int W, const std::vector<int>& wt, const std::vector<int>& val, int n) {
-        std::vector<std::vector<int>> dp(n, std::vector<int>(W + 1, 0));
-
-        for (int w = wt[0]; w <= W; ++w) {
-            dp[0][w] = val[0];
+    // Approach 1: Recursive DP with Memoization
+    // State: dp[idx][cap] = max value from index idx onwards with capacity cap
+    
+    int n, W;
+    vector<int> wt, val;
+    int dp[1005][1005];
+    
+    int solve(int idx, int capacity) {
+        // Base case: no items left or no capacity
+        if (idx >= n || capacity == 0) return 0;
+        
+        // Memoization check
+        if (dp[idx][capacity] != -1) return dp[idx][capacity];
+        
+        // Option 1: Don't take current item
+        int notTake = solve(idx + 1, capacity);
+        
+        // Option 2: Take current item (if it fits)
+        int take = 0;
+        if (wt[idx] <= capacity) {
+            take = val[idx] + solve(idx + 1, capacity - wt[idx]);
         }
-
-        for (int i = 1; i < n; ++i) {
-            for (int w = 0; w <= W; ++w) {
-                int notTake = dp[i - 1][w];
-                int take = (wt[i] <= w) ? val[i] + dp[i - 1][w - wt[i]] : 0;
-                dp[i][w] = std::max(notTake, take);
-            }
-        }
-        return dp[n - 1][W];
+        
+        return dp[idx][capacity] = max(take, notTake);
     }
-
-    // Approach 2: Single 1D Array Backwards Traversal - O(N * W) Time, O(W) Space
-    static int knapSackOptimized(int W, const std::vector<int>& wt, const std::vector<int>& val, int n) {
-        std::vector<int> dp(W + 1, 0);
-
-        for (int w = wt[0]; w <= W; ++w) {
-            dp[w] = val[0];
-        }
-
-        for (int i = 1; i < n; ++i) {
-            for (int w = W; w >= wt[i]; --w) {
-                dp[w] = std::max(dp[w], val[i] + dp[w - wt[i]]);
+    
+    int knapSack(int W, vector<int>& wt, vector<int>& val, int n) {
+        this->W = W;
+        this->n = n;
+        this->wt = wt;
+        this->val = val;
+        memset(dp, -1, sizeof(dp));
+        return solve(0, W);
+    }
+    
+    // Approach 2: Space-Optimized 1D DP (Backward iteration) (FSM)
+    int knapSackOptimized(int W, vector<int>& wt, vector<int>& val, int n) {
+        // Our states (Buckets 0 to W). Initialized to 0 value.
+        vector<int> dp(W + 1, 0);
+        
+        for (int i = 0; i < n; i++) {
+            int current_weight = wt[i];
+            int current_value = val[i];
+            
+            // The Backward Pass: Prevents the item from being used multiple times
+            for (int wei = W; wei >= current_weight; wei--) {
+                
+                // State Transition: Max of Rest Edge vs Action Edge
+                dp[wei] = max(dp[wei], dp[wei - current_weight] + current_value);
+                
             }
         }
+        
+        // The maximum value could be at exactly W weight, or slightly less,
+        // but since our FSM naturally carries max values forward, dp[W] 
+        // will always hold the absolute maximum possible value.
         return dp[W];
     }
 };
 
 int main() {
-    std::vector<int> val1 = {60, 100, 120};
-    std::vector<int> wt1 = {10, 20, 30};
-    int W1 = 50;
-    assert(Knapsack01::knapSack2D(W1, wt1, val1, 3) == 220);
-    assert(Knapsack01::knapSackOptimized(W1, wt1, val1, 3) == 220);
-
-    std::vector<int> val2 = {10, 40, 30, 50};
-    std::vector<int> wt2 = {5, 4, 6, 3};
-    int W2 = 5;
-    assert(Knapsack01::knapSack2D(W2, wt2, val2, 4) == 50);
-    assert(Knapsack01::knapSackOptimized(W2, wt2, val2, 4) == 50);
-
-    std::cout << "All 0/1 Knapsack tests passed successfully!\n";
+    Solution sol;
+    
+    // Test case 1
+    vector<int> val1 = {1, 2, 3};
+    vector<int> wt1 = {4, 5, 1};
+    cout << "Test 1: " << sol.knapSack(4, wt1, val1, 3) << endl; // Expected: 3
+    
+    // Test case 2
+    vector<int> val2 = {1, 2, 3};
+    vector<int> wt2 = {4, 5, 6};
+    cout << "Test 2: " << sol.knapSack(3, wt2, val2, 3) << endl; // Expected: 0
+    
+    // Test case 3
+    vector<int> val3 = {10, 40, 30, 50};
+    vector<int> wt3 = {5, 4, 6, 3};
+    cout << "Test 3: " << sol.knapSack(5, wt3, val3, 4) << endl; // Expected: 50
+    
     return 0;
 }
-

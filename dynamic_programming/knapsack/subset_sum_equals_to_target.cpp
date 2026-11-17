@@ -1,63 +1,83 @@
-#include <iostream>
-#include <vector>
-#include <cassert>
+// Subset Sum Equals Target (GFG)
 
-class SubsetSum {
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
 public:
-    // Approach 1: 2D Tabulation - O(N * K) Time, O(N * K) Space
-    static bool subsetSumToK2D(int n, int k, const std::vector<int>& arr) {
-        std::vector<std::vector<bool>> dp(n, std::vector<bool>(k + 1, false));
-
-        for (int i = 0; i < n; ++i) dp[i][0] = true;
-        if (arr[0] <= k) dp[0][arr[0]] = true;
-
-        for (int i = 1; i < n; ++i) {
-            for (int target = 1; target <= k; ++target) {
-                bool notTake = dp[i - 1][target];
-                bool take = (arr[i] <= target) ? dp[i - 1][target - arr[i]] : false;
-                dp[i][target] = notTake || take;
-            }
-        }
-        return dp[n - 1][k];
+    // Approach 1: Recursive DP with Memoization
+    // State: dp[idx][sum] = can we achieve sum using elements from idx onwards
+    
+    int n, target;
+    vector<int> arr;
+    int dp[105][10005];
+    
+    bool solve(int idx, int sum) {
+        // Base case: target sum achieved
+        if (sum == 0) return true;
+        
+        // Base case: no elements left or invalid sum
+        if (idx >= n || sum < 0) return false;
+        
+        // Memoization check
+        if (dp[idx][sum] != -1) return dp[idx][sum];
+        
+        // Option 1: Don't take current element
+        bool notTake = solve(idx + 1, sum);
+        
+        // Option 2: Take current element
+        bool take = solve(idx + 1, sum - arr[idx]);
+        
+        return dp[idx][sum] = (take || notTake);
     }
-
-    // Approach 2: Space-Optimized 1D Vector - O(N * K) Time, O(K) Space
-    static bool subsetSumToKOptimized(int n, int k, const std::vector<int>& arr) {
-        std::vector<bool> dp(k + 1, false);
+    
+    bool isSubsetSum(vector<int>& arr, int target) {
+        this->arr = arr;
+        this->n = arr.size();
+        this->target = target;
+        memset(dp, -1, sizeof(dp));
+        return solve(0, target);
+    }
+    
+    // Approach 2: Space-Optimized 1D DP (Finite State Machine) (Backward iteration)
+    bool isSubsetSumOptimized(vector<int>& arr, int target) {
+        // Our states (Buckets 0 to target).
+        vector<bool> dp(target + 1, false);
+        
+        // Base state: We can always achieve a sum of 0 (empty subset)
         dp[0] = true;
-        if (arr[0] <= k) dp[arr[0]] = true;
-
-        for (int i = 1; i < n; ++i) {
-            std::vector<bool> curr(k + 1, false);
-            curr[0] = true;
-            for (int target = 1; target <= k; ++target) {
-                bool notTake = dp[target];
-                bool take = (arr[i] <= target) ? dp[target - arr[i]] : false;
-                curr[target] = notTake || take;
+        
+        for (int num : arr) {
+            // Loop backwards from Target down to 'num'
+            // This acts as an invisible snapshot, preventing the cloning glitch!
+            for (int sum = target; sum >= num; --sum) {
+                
+                // Action Edge: If the bucket 'num' steps behind us is reachable,
+                // then our current bucket is also reachable.
+                if (dp[sum - num] == true) {
+                    dp[sum] = true;
+                }
             }
-            dp = curr;
         }
-        return dp[k];
+        
+        return dp[target];
     }
 };
 
 int main() {
-    std::vector<int> a1 = {1, 2, 3, 4};
-    int k1 = 4;
-    assert(SubsetSum::subsetSumToK2D(4, k1, a1) == true);
-    assert(SubsetSum::subsetSumToKOptimized(4, k1, a1) == true);
-
-    std::vector<int> a2 = {4, 3, 2, 1};
-    int k2 = 5;
-    assert(SubsetSum::subsetSumToK2D(4, k2, a2) == true);
-    assert(SubsetSum::subsetSumToKOptimized(4, k2, a2) == true);
-
-    std::vector<int> a3 = {2, 5, 1, 6, 7};
-    int k3 = 4;
-    assert(SubsetSum::subsetSumToK2D(5, k3, a3) == false);
-    assert(SubsetSum::subsetSumToKOptimized(5, k3, a3) == false);
-
-    std::cout << "All Subset Sum Equals Target tests passed successfully!\n";
+    Solution sol;
+    
+    // Test case 1
+    vector<int> arr1 = {3, 34, 4, 12, 5, 2};
+    cout << "Test 1: " << (sol.isSubsetSum(arr1, 9) ? "true" : "false") << endl; // Expected: true
+    
+    // Test case 2
+    vector<int> arr2 = {3, 34, 4, 12, 5, 2};
+    cout << "Test 2: " << (sol.isSubsetSum(arr2, 30) ? "true" : "false") << endl; // Expected: false
+    
+    // Test case 3
+    vector<int> arr3 = {1, 2, 7};
+    cout << "Test 3: " << (sol.isSubsetSum(arr3, 10) ? "true" : "false") << endl; // Expected: true
+    
     return 0;
 }
-

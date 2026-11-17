@@ -1,59 +1,84 @@
-#include <iostream>
-#include <vector>
-#include <cassert>
+// Coin Change II (LeetCode 518)
 
-class CoinChangeII {
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
 public:
-    // Approach 1: 2D Tabulation - O(N * amount) Time, O(N * amount) Space
-    static int change2D(int amount, const std::vector<int>& coins) {
-        int n = coins.size();
-        std::vector<std::vector<unsigned long long>> dp(n, std::vector<unsigned long long>(amount + 1, 0));
-
-        for (int t = 0; t <= amount; ++t) {
-            if (t % coins[0] == 0) dp[0][t] = 1;
+    // Approach 1: Recursive DP with Memoization (Unbounded Knapsack)
+    // State: dp[idx][amount] = number of ways to make amount using coins from idx onwards
+    
+    int n;
+    vector<int> coins;
+    map<pair<int, int>, int> memo;
+    
+    int solve(int idx, int amount) {
+        // Base case: amount achieved
+        if (amount == 0) return 1;
+        
+        // Base case: no coins left or invalid amount
+        if (idx >= n || amount < 0) return 0;
+        
+        // Memoization check
+        auto key = make_pair(idx, amount);
+        if (memo.find(key) != memo.end()) return memo[key];
+        
+        // Option 1: Don't take current coin, move to next
+        int notTake = solve(idx + 1, amount);
+        
+        // Option 2: Take current coin (stay at same index - unbounded)
+        int take = 0;
+        if (coins[idx] <= amount) {
+            take = solve(idx, amount - coins[idx]); // Stay at idx
         }
-
-        for (int i = 1; i < n; ++i) {
-            for (int t = 0; t <= amount; ++t) {
-                unsigned long long notTake = dp[i - 1][t];
-                unsigned long long take = (coins[i] <= t) ? dp[i][t - coins[i]] : 0;
-                dp[i][t] = notTake + take;
-            }
-        }
-        return dp[n - 1][amount];
+        
+        return memo[key] = take + notTake;
     }
-
-    // Approach 2: 1D Forward Unbounded - O(N * amount) Time, O(amount) Space
-    static int changeOptimized(int amount, const std::vector<int>& coins) {
-        std::vector<unsigned int> dp(amount + 1, 0);
+    
+    int change(int amount, vector<int>& coins) {
+        this->coins = coins;
+        this->n = coins.size();
+        memo.clear();
+        return solve(0, amount);
+    }
+    
+    // Approach 2: Space-Optimized 1D DP (Forward iteration for combinations)
+    int changeOptimized(int amount, vector<int>& coins) {
+        // Our states: buckets 0 to amount.
+        vector<int> dp(amount + 1, 0);
+        
+        // Base state: 1 way to make an amount of 0 (use no coins)
         dp[0] = 1;
-
+        
         for (int coin : coins) {
-            for (int a = coin; a <= amount; ++a) {
-                dp[a] += dp[a - coin];
+            
+            // THE FORWARD PASS: Intentional chain-reaction (Unbounded Knapsack)
+            for (int target = coin; target <= amount; target++) {
+                
+                // The Action Edge adds to the Rest Edge
+                dp[target] += dp[target - coin];
+                
             }
         }
+        
         return dp[amount];
     }
 };
 
 int main() {
-    std::vector<int> c1 = {1, 2, 5};
-    int a1 = 5;
-    assert(CoinChangeII::change2D(a1, c1) == 4);
-    assert(CoinChangeII::changeOptimized(a1, c1) == 4);
-
-    std::vector<int> c2 = {2};
-    int a2 = 3;
-    assert(CoinChangeII::change2D(a2, c2) == 0);
-    assert(CoinChangeII::changeOptimized(a2, c2) == 0);
-
-    std::vector<int> c3 = {10};
-    int a3 = 10;
-    assert(CoinChangeII::change2D(a3, c3) == 1);
-    assert(CoinChangeII::changeOptimized(a3, c3) == 1);
-
-    std::cout << "All Coin Change II tests passed successfully!\n";
+    Solution sol;
+    
+    // Test case 1
+    vector<int> coins1 = {1, 2, 5};
+    cout << "Test 1: " << sol.change(5, coins1) << endl; // Expected: 4
+    
+    // Test case 2
+    vector<int> coins2 = {2};
+    cout << "Test 2: " << sol.change(3, coins2) << endl; // Expected: 0
+    
+    // Test case 3
+    vector<int> coins3 = {10};
+    cout << "Test 3: " << sol.change(10, coins3) << endl; // Expected: 1
+    
     return 0;
 }
-

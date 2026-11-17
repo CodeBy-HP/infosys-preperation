@@ -1,107 +1,91 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
+// Coin Change (LeetCode 322)
 
+#include <bits/stdc++.h>
 using namespace std;
 
-class CoinChange {
-private:
-    static const int INF = 1e9;
-
+class Solution {
 public:
-    // =========================================================================
-    // 1. Top-Down Approach (Recursion + Memoization)
-    // Time Complexity: O(N * Amount)
-    // Space Complexity: O(N * Amount)
-    // =========================================================================
-    int coinChangeMemo(const vector<int>& coins, int amount) {
-        int n = coins.size();
-        vector<vector<int>> memo(n, vector<int>(amount + 1, -1));
-        int ans = solveMemo(n - 1, amount, coins, memo);
-        return ans >= INF ? -1 : ans;
-    }
-
-private:
-    int solveMemo(int i, int amount, const vector<int>& coins, vector<vector<int>>& memo) {
+    // Approach 1: Recursive DP with Memoization (Unbounded Knapsack)
+    // State: dp[idx][amount] = min coins needed from idx onwards to make amount
+    
+    int n;
+    vector<int> coins;
+    map<pair<int, int>, int> memo;
+    
+    int solve(int idx, int amount) {
+        // Base case: amount achieved
         if (amount == 0) return 0;
-        if (i < 0 || amount < 0) return INF;
-
-        if (memo[i][amount] != -1) return memo[i][amount];
-
-        // Choice A: Do not pick this coin, move to i - 1
-        int notPick = solveMemo(i - 1, amount, coins, memo);
-
-        // Choice B: Pick this coin, STAY on coin i (unbounded reuse)
-        int pick = INF;
-        if (coins[i] <= amount) {
-            pick = 1 + solveMemo(i, amount - coins[i], coins, memo);
+        
+        // Base case: no coins left or invalid amount
+        if (idx >= n || amount < 0) return INT_MAX - 1;
+        
+        // Memoization check
+        auto key = make_pair(idx, amount);
+        if (memo.find(key) != memo.end()) return memo[key];
+        
+        // Option 1: Don't take current coin, move to next
+        int notTake = solve(idx + 1, amount);
+        
+        // Option 2: Take current coin (stay at same index - unbounded)
+        int take = INT_MAX - 1;
+        if (coins[idx] <= amount) {
+            take = 1 + solve(idx, amount - coins[idx]); // Stay at idx
         }
-
-        return memo[i][amount] = min(pick, notPick);
+        
+        return memo[key] = min(take, notTake);
     }
-
-public:
-    // =========================================================================
-    // 2. Bottom-Up Approach (2D Tabulation)
-    // Time Complexity: O(N * Amount)
-    // Space Complexity: O(N * Amount)
-    // =========================================================================
-    int coinChangeTabulation(const vector<int>& coins, int amount) {
-        int n = coins.size();
-        vector<vector<int>> dp(n, vector<int>(amount + 1, INF));
-
-        for (int i = 0; i < n; i++) dp[i][0] = 0;
-
-        for (int a = 1; a <= amount; a++) {
-            if (a % coins[0] == 0) dp[0][a] = a / coins[0];
-        }
-
-        for (int i = 1; i < n; i++) {
-            for (int a = 1; a <= amount; a++) {
-                int notPick = dp[i - 1][a];
-                int pick = (coins[i] <= a) ? 1 + dp[i][a - coins[i]] : INF;
-                dp[i][a] = min(notPick, pick);
-            }
-        }
-
-        return dp[n - 1][amount] >= INF ? -1 : dp[n - 1][amount];
+    
+    int coinChange(vector<int>& coins, int amount) {
+        this->coins = coins;
+        this->n = coins.size();
+        memo.clear();
+        
+        int result = solve(0, amount);
+        return (result >= INT_MAX - 1) ? -1 : result;
     }
-
-    // =========================================================================
-    // 3. Space-Optimized Approach (1D Array with Forward Loop)
-    // Time Complexity: O(N * Amount)
-    // Space Complexity: O(Amount)
-    // =========================================================================
-    int coinChangeSpaceOptimized(const vector<int>& coins, int amount) {
-        vector<int> dp(amount + 1, amount + 1);
+    
+    // Approach 2: Space-Optimized 1D DP (Forward iteration for unbounded)
+    int coinChangeOptimized(vector<int>& coins, int amount) {
+        // A common trick: Instead of INT_MAX (which overflows if you add 1), 
+        // we use (amount + 1). It is mathematically impossible to need more 
+        // coins than the total amount (e.g., amount 11 using all 1-cent coins takes 11 coins).
+        int INF = amount + 1;
+        vector<int> dp(amount + 1, INF);
+        
+        // Base state: It takes 0 coins to make an amount of 0.
         dp[0] = 0;
-
+        
         for (int coin : coins) {
-            // Forward loop allows infinite coin reuse
-            for (int j = coin; j <= amount; j++) {
-                dp[j] = min(dp[j], 1 + dp[j - coin]);
+            
+            // THE FORWARD PASS: Intentional chain-reaction (Unbounded Knapsack)
+            for (int s = coin; s <= amount; s++) {
+                
+                // The Action Edge (Pulling from 's - coin')
+                if (dp[s - coin] != INF) {
+                    dp[s] = min(dp[s], dp[s - coin] + 1);
+                }
             }
         }
-
-        return dp[amount] > amount ? -1 : dp[amount];
+        
+        // If the final bucket still has our infinity lock, the amount is unreachable.
+        return dp[amount] == INF ? -1 : dp[amount];
     }
 };
 
 int main() {
-    CoinChange solver;
-
+    Solution sol;
+    
+    // Test case 1
     vector<int> coins1 = {1, 2, 5};
-    int amount1 = 11;
-    cout << "Test 1 [1, 2, 5], amount = 11:\n";
-    cout << "  Memoization:     " << solver.coinChangeMemo(coins1, amount1) << "\n";
-    cout << "  Tabulation:      " << solver.coinChangeTabulation(coins1, amount1) << "\n";
-    cout << "  Space-Optimized: " << solver.coinChangeSpaceOptimized(coins1, amount1) << " (Expected: 3)\n";
-
+    cout << "Test 1: " << sol.coinChange(coins1, 11) << endl; // Expected: 3
+    
+    // Test case 2
     vector<int> coins2 = {2};
-    int amount2 = 3;
-    cout << "Test 2 [2], amount = 3:\n";
-    cout << "  Space-Optimized: " << solver.coinChangeSpaceOptimized(coins2, amount2) << " (Expected: -1)\n";
-
+    cout << "Test 2: " << sol.coinChange(coins2, 3) << endl; // Expected: -1
+    
+    // Test case 3
+    vector<int> coins3 = {1};
+    cout << "Test 3: " << sol.coinChange(coins3, 0) << endl; // Expected: 0
+    
     return 0;
 }
-

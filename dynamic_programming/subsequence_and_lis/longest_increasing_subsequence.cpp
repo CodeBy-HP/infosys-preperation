@@ -63,26 +63,69 @@ public:
         return maxLen;
     }
 
+    // Finite State Machine Approach
+    int lengthOfLIS(vector<int>& nums) {
+        int n = nums.size();
+        int INF = 1e9; // Safe infinity for elements
+        
+        // Buckets represent the LENGTH of the sequence.
+        // They hold the smallest ending element for that length.
+        vector<int> dp(n + 1, INF);
+        
+        // Base state: A sequence of length 0 effectively ends in -INF
+        dp[0] = -INF; 
+        
+        int max_length = 0;
+        
+        for (int curr : nums) {
+            
+            // THE BACKWARD PASS: (0/1 Knapsack style, use element once)
+            for (int len = n; len >= 1; len--) {
+                
+                // Action Edge: We can only extend if we are strictly greater 
+                // than the ending element of the previous length bucket.
+                if (dp[len - 1] < curr) {
+                    
+                    // Pull and minimize the ending element
+                    dp[len] = min(dp[len], curr);
+                    
+                    // Keep track of the furthest bucket we've successfully filled
+                    if (dp[len] != INF) {
+                        max_length = max(max_length, len);
+                    }
+                }
+            }
+        }
+        
+        return max_length;
+    }
+
     // =========================================================================
     // 3. Patience Sorting / Binary Search Approach
     // Time Complexity: O(N log N)
     // Space Complexity: O(N)
     // =========================================================================
     int lengthOfLISBinarySearch(const vector<int>& nums) {
-        if (nums.empty()) return 0;
-
-        vector<int> tails;
-
-        for (int x : nums) {
-            auto it = lower_bound(tails.begin(), tails.end(), x);
-            if (it == tails.end()) {
-                tails.push_back(x);
+        // This vector dynamically represents our valid buckets
+        vector<int> buckets; 
+        
+        for (int curr : nums) {
+            // Binary search to find the first bucket whose ending element is >= curr
+            auto it = lower_bound(buckets.begin(), buckets.end(), curr);
+            
+            if (it == buckets.end()) {
+                // If curr is bigger than ALL buckets, it extends our max length!
+                // Create a brand new bucket at the end.
+                buckets.push_back(curr);
             } else {
-                *it = x;
+                // Otherwise, it overwrites an existing bucket with a smaller ending element
+                // This is your exact logic: bucket[length] = min(bucket[length], curr)
+                *it = curr; 
             }
         }
-
-        return tails.size();
+        
+        // The number of valid buckets created is our Longest Increasing Subsequence
+        return buckets.size();
     }
 };
 
