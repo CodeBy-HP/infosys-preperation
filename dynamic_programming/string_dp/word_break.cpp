@@ -7,29 +7,35 @@
 
 class WordBreak {
 public:
-    static bool wordBreak(const std::string& s, const std::vector<std::string>& wordDict) {
-        std::unordered_set<std::string> dict(wordDict.begin(), wordDict.end());
-        size_t maxLen = 0;
-        for (const auto& w : wordDict) {
-            maxLen = std::max(maxLen, w.length());
-        }
-
+    bool wordBreak(string s, vector<string>& wordDict) {
         int n = s.length();
-        std::vector<bool> dp(n + 1, false);
+        
+        // Convert array to Hash Set for O(1) lookups
+        unordered_set<string> dict(wordDict.begin(), wordDict.end());
+        
+        // dp[i] represents whether s[0...i-1] can be segmented
+        vector<bool> dp(n + 1, false);
+        
+        // Base case: The empty string is always a valid starting point
         dp[0] = true;
-
-        for (int i = 1; i <= n; ++i) {
-            for (size_t len = 1; len <= maxLen && len <= static_cast<size_t>(i); ++len) {
-                int j = i - len;
-                if (dp[j]) {
-                    std::string sub = s.substr(j, len);
-                    if (dict.count(sub)) {
-                        dp[i] = true;
-                        break;
-                    }
+        
+        // i represents the end of the substring we are checking
+        for (int i = 1; i <= n; i++) {
+            
+            // j represents the start of the substring. 
+            // We look backward to see if we can jump from a previous safe pad
+            for (int j = 0; j < i; j++) {
+                
+                // ACTION EDGE: If the pad at 'j' is safe AND the word between 'j' and 'i' is valid
+                if (dp[j] && dict.count(s.substr(j, i - j))) {
+                    dp[i] = true; // Mark pad 'i' as safe!
+                    break;        // We only need ONE valid way to reach 'i', so we stop looking
                 }
+                
             }
         }
+        
+        // If the final pad is safe, the entire string can be broken
         return dp[n];
     }
 };

@@ -17,46 +17,44 @@
 
 class Solution {
 private:
-    long long solve(int l, int r, long long base, long long X, long long Y, const std::vector<long long>& A) {
-        if (l > r) return 0;
-
-        long long length = r - l + 1;
-        long long option_all_resets = length * Y;
-
-        // Find the minimum value in A[l...r]
-        long long min_val = A[l];
-        for (int i = l + 1; i <= r; ++i) {
-            if (A[i] < min_val) {
-                min_val = A[i];
+    long long solve(int L, int R, long long current_floor, vector<int>& A, long long X, long long Y) {
+        // Base Case: There are no buildings left in this block
+        if (L > R) return 0;
+        
+        // 1. Find the shortest skyscraper in the current block
+        int min_idx = L;
+        for (int i = L + 1; i <= R; i++) {
+            if (A[i] < A[min_idx]) {
+                min_idx = i;
             }
         }
-
-        // Cost of reducing baseline to min_val using Operation 1
-        long long cost_op1 = (min_val - base) * X;
-
-        // Recursively conquer subsegments separated by min_val
-        int i = l;
-        while (i <= r) {
-            if (A[i] > min_val) {
-                int j = i;
-                while (j <= r && A[j] > min_val) {
-                    j++;
-                }
-                cost_op1 += solve(i, j - 1, min_val, X, Y, A);
-                i = j;
-            } else {
-                i++;
-            }
-        }
-
-        return std::min(option_all_resets, cost_op1);
+        
+        // --- OPTION A: Vertical Wrecking Ball ---
+        // Destroy every building in this block individually
+        long long wrecking_ball_cost = (R - L + 1) * Y;
+        
+        // --- OPTION B: Horizontal Laser ---
+        // Fire the laser until the shortest building is destroyed.
+        // We only need to shoot from our current_floor up to the top of the shortest building.
+        long long laser_shots = A[min_idx] - current_floor;
+        long long laser_cost = laser_shots * X;
+        
+        // The shortest building is now gone! Split the city into Left and Right subproblems.
+        // The new 'current_floor' for the subproblems is the height of the building we just destroyed.
+        long long left_city = solve(L, min_idx - 1, A[min_idx], A, X, Y);
+        long long right_city = solve(min_idx + 1, R, A[min_idx], A, X, Y);
+        
+        long long total_laser_cost = laser_cost + left_city + right_city;
+        
+        // Return the absolute cheapest demolition method for this block
+        return min(wrecking_ball_cost, total_laser_cost);
     }
 
 public:
-    long long minCostToMakeArrayZero(const std::vector<long long>& A, long long X, long long Y) {
-        int n = static_cast<int>(A.size());
-        if (n == 0) return 0;
-        return solve(0, n - 1, 0, X, Y, A);
+    long long minCostToZero(vector<int>& A, long long X, long long Y) {
+        int n = A.size();
+        // Start with the full city (0 to n-1), standing on the ground (floor 0)
+        return solve(0, n - 1, 0, A, X, Y);
     }
 };
 
@@ -67,7 +65,7 @@ int main() {
     {
         std::vector<long long> A = {1, 2, 3, 2, 1};
         long long X = 2, Y = 3;
-        long long ans = solver.minCostToMakeArrayZero(A, X, Y);
+        long long ans = solver.minCostToZero(A, X, Y);
         std::cout << "Test 1: Expected = 6, Actual = " << ans << std::endl;
         assert(ans == 6);
     }
@@ -76,7 +74,7 @@ int main() {
     {
         std::vector<long long> A = {10, 10, 10};
         long long X = 5, Y = 2;
-        long long ans = solver.minCostToMakeArrayZero(A, X, Y);
+        long long ans = solver.minCostToZero(A, X, Y);
         std::cout << "Test 2: Expected = 6, Actual = " << ans << std::endl;
         assert(ans == 6);
     }
@@ -86,7 +84,7 @@ int main() {
         std::vector<long long> A = {5};
         long long X = 2, Y = 7;
         // Op 1: 5 * 2 = 10, Op 2: 7 -> min is 7
-        long long ans = solver.minCostToMakeArrayZero(A, X, Y);
+        long long ans = solver.minCostToZero(A, X, Y);
         std::cout << "Test 3: Expected = 7, Actual = " << ans << std::endl;
         assert(ans == 7);
     }

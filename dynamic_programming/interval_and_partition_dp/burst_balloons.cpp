@@ -5,38 +5,55 @@
 using namespace std;
 
 class BurstBalloons {
-public:
     // =========================================================================
     // 1. Top-Down Approach (Recursion + Memoization)
     // Time Complexity: O(N^3)
     // Space Complexity: O(N^2)
     // =========================================================================
-    int maxCoinsMemo(const vector<int>& nums) {
-        int n = nums.size();
-        vector<int> a;
-        a.push_back(1);
-        for (int x : nums) a.push_back(x);
-        a.push_back(1);
-
-        vector<vector<int>> memo(n + 2, vector<int>(n + 2, -1));
-        return solveMemo(1, n, a, memo);
+private:
+    int solve(int i, int j, vector<int>& nums, vector<vector<int>>& memo) {
+        // Base Case: If the pointers cross, there are no balloons left to pop
+        if (i > j) return 0;
+        
+        if (memo[i][j] != -1) return memo[i][j];
+        
+        int max_coins = 0;
+        
+        // 'k' represents the LAST balloon to burst in the interval [i...j]
+        for (int k = i; k <= j; k++) {
+            
+            // Destroy everything to the left of k
+            int left_cost = solve(i, k - 1, nums, memo);
+            
+            // Destroy everything to the right of k
+            int right_cost = solve(k + 1, j, nums, memo);
+            
+            // Pop k itself. Its neighbors are strictly outside the interval!
+            int burst_cost = nums[i - 1] * nums[k] * nums[j + 1];
+            
+            int total_cost = left_cost + right_cost + burst_cost;
+            
+            // We want to MAXIMIZE our coins
+            max_coins = max(max_coins, total_cost);
+        }
+        
+        return memo[i][j] = max_coins;
     }
 
-private:
-    int solveMemo(int i, int j, const vector<int>& a, vector<vector<int>>& memo) {
-        if (i > j) return 0;
-        if (memo[i][j] != -1) return memo[i][j];
-
-        int maxCoins = 0;
-        // Try picking balloon k as the LAST balloon to burst in interval [i, j]
-        for (int k = i; k <= j; k++) {
-            int coins = a[i - 1] * a[k] * a[j + 1]
-                      + solveMemo(i, k - 1, a, memo)
-                      + solveMemo(k + 1, j, a, memo);
-            maxCoins = max(maxCoins, coins);
+public:
+    int maxCoins(vector<int>& nums) {
+        int n = nums.size();
+        
+        // 1. Pad the boundaries with 1s to handle the edge cases seamlessly
+        vector<int> arr(n + 2, 1);
+        for (int i = 0; i < n; i++) {
+            arr[i + 1] = nums[i];
         }
-
-        return memo[i][j] = maxCoins;
+        
+        vector<vector<int>> memo(n + 2, vector<int>(n + 2, -1));
+        
+        // 2. We want to burst the original balloons, which now sit from index 1 to n
+        return solve(1, n, arr, memo);
     }
 
 public:

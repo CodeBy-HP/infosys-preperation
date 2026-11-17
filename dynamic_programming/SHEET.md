@@ -92,13 +92,13 @@ This sheet organizes **58 high-frequency problems** across **8 core DP paradigms
 * **[Problem 8: Edit Distance (Levenshtein Distance)](string_dp/edit_distance.md)** ([C++ Code](string_dp/edit_distance.cpp)): Multi-operation string transformation (Insert, Delete, Replace).
 * **[Wildcard Matching](string_dp/wildcard_matching.md)** ([C++ Code](string_dp/wildcard_matching.cpp)): Matching strings with `'?'` and `'*'` wildcards in $O(N \cdot M)$ time and $O(M)$ space.
 * **[Word Break](string_dp/word_break.md)** ([C++ Code](string_dp/word_break.cpp)): Dictionary segmentation via boolean prefix DP and max word length lookback in $O(N \cdot L_{\max}^2)$ time.
-* **[Count Palindromic Subsequences](string_dp/count_palindromic_subsequences.md)** ([C++ Code](string_dp/count_palindromic_subsequences.cpp)): Principle of Inclusion-Exclusion interval DP counting all palindromic subsequences modulo $10^9 + 7$.
 
 ---
 
 ## 7. Interval & Partition DP (Matrix Chain Multiplication)
 *Focus: Non-linear sequence division, collapsing intervals, last-survivor techniques, and boolean parenthesization.*
 
+* **[Count Palindromic Subsequences](interval_and_partition_dp/count_palindromic_subsequences.md)** ([C++ Code](interval_and_partition_dp/count_palindromic_subsequences.cpp)): Principle of Inclusion-Exclusion interval DP counting all palindromic subsequences modulo $10^9 + 7$.
 * **[Matrix Chain Multiplication (MCM)](interval_and_partition_dp/matrix_chain_multiplication.md)** ([C++ Code](interval_and_partition_dp/matrix_chain_multiplication.cpp)): Canonical MCM interval partitioning minimizing scalar multiplications in $O(N^3)$ time and $O(N^2)$ space.
 * **[Problem 12: Burst Balloons](interval_and_partition_dp/burst_balloons.md)** ([C++ Code](interval_and_partition_dp/burst_balloons.cpp)): Why picking the first balloon fails; the "Last Survivor" interval DP technique.
 * **[Problem 13: Palindrome Partitioning II](interval_and_partition_dp/palindrome_partitioning_ii.md)** ([C++ Code](interval_and_partition_dp/palindrome_partitioning_ii.cpp)): Front Partitioning optimization reducing $O(N^3)$ interval DP down to $O(N^2)$ with $O(1)$ precomputed palindromes.
