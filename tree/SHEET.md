@@ -1,5 +1,7 @@
 # Trees Master Roadmap & Problem Sheet
 
+There are 55 distinct questions and conceptual topics in this list.
+
 Welcome to the **Binary Trees & Binary Search Trees** paradigm. While linear structures like arrays and linked lists have a single successor, hierarchical trees branch in multiple directions. 
 
 Mastering trees requires internalizing the fundamental **recursion and traversal archetypes**:

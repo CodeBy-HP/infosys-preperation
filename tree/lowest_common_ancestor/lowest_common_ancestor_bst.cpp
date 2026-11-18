@@ -12,6 +12,30 @@ struct TreeNode {
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
 };
 
+// Recursive Solution
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        // Walk down the tree
+        while (root != nullptr) {
+            // Case 1: Both targets are smaller, go Left
+            if (p->val < root->val && q->val < root->val) {
+                root = root->left;
+            }
+            // Case 2: Both targets are larger, go Right
+            else if (p->val > root->val && q->val > root->val) {
+                root = root->right;
+            }
+            // Case 3: The split point (or we found one of the targets)
+            else {
+                return root;
+            }
+        }
+        
+        return nullptr;
+    }
+};
+
 class LowestCommonAncestorBST {
 public:
     // =========================================================================

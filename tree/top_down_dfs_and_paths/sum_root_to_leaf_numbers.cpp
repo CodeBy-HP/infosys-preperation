@@ -4,6 +4,35 @@
 
 using namespace std;
 
+
+class Solution {
+private:
+    void solve(TreeNode* node, int currentNumber, int& totalSum) {
+        if (!node) return;
+        
+        // Build the number for this specific timeline
+        currentNumber = currentNumber * 10 + node->val;
+        
+        // Leaf node reached: dump the built number into the global bucket
+        if (!node->left && !node->right) {
+            totalSum += currentNumber;
+            return;
+        }
+        
+        // Continue driving the vehicle down the branches
+        solve(node->left, currentNumber, totalSum);
+        solve(node->right, currentNumber, totalSum);
+    }
+
+public:
+    int sumNumbers(TreeNode* root) {
+        int totalSum = 0;
+        // Pass totalSum by reference (&) so all branches share the same bucket
+        solve(root, 0, totalSum); 
+        return totalSum;
+    }
+};
+
 // Definition for a binary tree node.
 struct TreeNode {
     int val;

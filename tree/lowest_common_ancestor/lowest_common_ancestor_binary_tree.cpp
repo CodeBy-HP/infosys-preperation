@@ -20,21 +20,28 @@ public:
     // Space Complexity: O(H) call stack
     // =========================================================================
     TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-        // Base case: Dead end or target discovered
-        if (!root || root == p || root == q) {
+        // Base Case 1: Dead end
+        if (!root) return nullptr;
+        
+        // Base Case 2: We found one of the VIPs! Report back immediately.
+        if (root == p || root == q) return root;
+        
+        // Send search parties down both branches
+        TreeNode* left_report = lowestCommonAncestor(root->left, p, q);
+        TreeNode* right_report = lowestCommonAncestor(root->right, p, q);
+        
+        // INTERSECTION FOUND: If both branches found a target, this node is the LCA.
+        if (left_report != nullptr && right_report != nullptr) {
             return root;
         }
-
-        TreeNode* left = lowestCommonAncestor(root->left, p, q);
-        TreeNode* right = lowestCommonAncestor(root->right, p, q);
-
-        // Case A: Convergence point
-        if (left && right) {
-            return root;
+        
+        // ONLY ONE FOUND: Pass the successful report up the chain.
+        // If left found something, return left. Else, return right (which might be null).
+        if (left_report != nullptr) {
+            return left_report;
+        } else {
+            return right_report;
         }
-
-        // Case B: Pass up whichever child found a target
-        return left ? left : right;
     }
 };
 

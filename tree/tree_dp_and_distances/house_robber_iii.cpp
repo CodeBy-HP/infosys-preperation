@@ -13,6 +13,49 @@ struct TreeNode {
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
 };
 
+// Recusion with Memo
+class Solution {
+private:
+    // Two maps to track the two different states for each node
+    unordered_map<TreeNode*, int> memoToggleOn;
+    unordered_map<TreeNode*, int> memoToggleOff;
+
+    int solve(TreeNode* node, bool canRob) {
+        if (!node) return 0;
+
+        if (canRob) {
+            // Check cache
+            if (memoToggleOn.count(node)) return memoToggleOn[node];
+
+            // Choice 1: Pick it (Toggle turns OFF for children)
+            int pick = node->val + solve(node->left, false) + solve(node->right, false);
+            
+            // Choice 2: Not Pick it (Toggle stays ON for children)
+            int notPick = solve(node->left, true) + solve(node->right, true);
+
+            // Cache and return the max of both choices
+            return memoToggleOn[node] = max(pick, notPick);
+            
+        } else {
+            // Check cache
+            if (memoToggleOff.count(node)) return memoToggleOff[node];
+
+            // We CANNOT pick it. 
+            // We just skip it, meaning the children are now unlocked (Toggle turns ON)
+            int notPick = solve(node->left, true) + solve(node->right, true);
+
+            // Cache and return
+            return memoToggleOff[node] = notPick;
+        }
+    }
+
+public:
+    int rob(TreeNode* root) {
+        // We start at the root with full permission to rob it
+        return solve(root, true);
+    }
+};
+
 class HouseRobberIII {
 private:
     // Returns {rob_this_node, skip_this_node}

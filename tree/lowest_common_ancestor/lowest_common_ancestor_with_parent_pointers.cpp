@@ -12,6 +12,7 @@ public:
     Node(int x) : val(x), left(nullptr), right(nullptr), parent(nullptr) {}
 };
 
+
 class LowestCommonAncestorWithParent {
 public:
     // =========================================================================
@@ -22,14 +23,18 @@ public:
     Node* lowestCommonAncestor(Node* p, Node* q) {
         Node* a = p;
         Node* b = q;
-
-        // When pointer reaches root, redirect to the other node
+        
+        // They will loop until they crash into each other.
+        // If they don't intersect, they will both hit 'nullptr' at the exact same time and exit.
         while (a != b) {
-            a = (a->parent != nullptr) ? a->parent : q;
-            b = (b->parent != nullptr) ? b->parent : p;
+            // If A reaches the top, teleport to q. Otherwise, step up.
+            a = (a == nullptr) ? q : a->parent;
+            
+            // If B reaches the top, teleport to p. Otherwise, step up.
+            b = (b == nullptr) ? p : b->parent;
         }
-
-        return a; // Meeting point is LCA
+        
+        return a;
     }
 };
 

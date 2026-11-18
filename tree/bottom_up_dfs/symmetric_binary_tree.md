@@ -20,7 +20,7 @@ Output: false (Not symmetric)
 ```
 
 ---
-
+   
 ## 1. Algorithmic Approach (Mirror Pair Comparison)
 
 ### Recursive Invariant

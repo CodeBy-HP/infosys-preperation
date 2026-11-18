@@ -53,6 +53,72 @@ void changeTree(TreeNode* root) {
     }
 }
 
+
+// Transformation
+class Solution {
+private:
+    // Pass 1: Post-Order (Bottom-Up)
+    // Ensures every parent is >= the sum of its children.
+    void inflateParents(TreeNode* node) {
+        if (!node) return;
+        
+        // 1. Traverse all the way to the leaves first
+        inflateParents(node->left);
+        inflateParents(node->right);
+        
+        // 2. Ignore leaf nodes
+        if (!node->left && !node->right) return;
+        
+        // 3. Calculate children's sum
+        int child_sum = 0;
+        if (node->left) child_sum += node->left->val;
+        if (node->right) child_sum += node->right->val;
+        
+        // 4. If children are heavier, inflate the parent
+        if (child_sum > node->val) {
+            node->val = child_sum;
+        }
+    }
+
+    // Pass 2: Pre-Order (Top-Down)
+    // Pushes any parent surplus down to the leaves.
+    void inflateChildren(TreeNode* node) {
+        if (!node) return;
+        
+        // 1. Ignore leaf nodes
+        if (!node->left && !node->right) return;
+        
+        // 2. Calculate current children's sum
+        int child_sum = 0;
+        if (node->left) child_sum += node->left->val;
+        if (node->right) child_sum += node->right->val;
+        
+        // 3. Because of Pass 1, node->val is GUARANTEED to be >= child_sum.
+        // We find the deficit and give it to one of the children.
+        int deficit = node->val - child_sum;
+        if (deficit > 0) {
+            if (node->left) {
+                node->left->val += deficit;
+            } else {
+                node->right->val += deficit;
+            }
+        }
+        
+        // 4. Recurse down. The child we just inflated will now act as a 
+        // heavy parent and push that surplus down its own subtree!
+        inflateChildren(node->left);
+        inflateChildren(node->right);
+    }
+
+public:
+    void changeTree(TreeNode* root) {
+        // Run Pass 1
+        inflateParents(root);
+        // Run Pass 2
+        inflateChildren(root);
+    }
+};
+
 int main() {
     /*
             10

@@ -4,7 +4,101 @@
 #include <map>
 #include <algorithm>
 
+
 using namespace std;
+
+// 1. DFS solution
+class Solution {
+private:
+    // col -> row -> sorted values
+    map<int, map<int, multiset<int>>> nodes;
+    
+    void dfs(TreeNode* root, int col, int row) {
+        if (!root) return;
+        
+        // Log the node at its exact 2D coordinate
+        nodes[col][row].insert(root->val);
+        
+        // Traverse Left: X decreases, Y increases
+        dfs(root->left, col - 1, row + 1);
+        
+        // Traverse Right: X increases, Y increases
+        dfs(root->right, col + 1, row + 1);
+    }
+    
+public:
+    vector<vector<int>> verticalTraversal(TreeNode* root) {
+        // Build the 3D map
+        dfs(root, 0, 0);
+        
+        vector<vector<int>> result;
+        
+        // The outer map is already sorted from leftmost column to rightmost
+        for (auto& [col, rowMap] : nodes) {
+            vector<int> current_column;
+            
+            // The inner map is already sorted from top row to bottom row
+            for (auto& [row, values] : rowMap) {
+                
+                // The multiset is already sorted by value
+                for (int val : values) {
+                    current_column.push_back(val);
+                }
+            }
+            result.push_back(current_column);
+        }
+        
+        return result;
+    }
+};
+
+// 2. BFS Solution
+class BFS_Solution {
+public:
+    vector<vector<int>> verticalTraversal(TreeNode* root) {
+        // Final blueprint: col -> all values top-to-bottom
+        map<int, vector<int>> columns; 
+        
+        // Queue stores {Node, Column}
+        queue<pair<TreeNode*, int>> q; 
+        if (root) q.push({root, 0});
+        
+        while (!q.empty()) {
+            int level_size = q.size();
+            
+            // STAGING AREA: col -> sorted values (for the CURRENT ROW only)
+            map<int, multiset<int>> current_row_staging;
+            
+            // 1. Unload the entire row into the staging area
+            for (int i = 0; i < level_size; i++) {
+                auto [node, col] = q.front();
+                q.pop();
+                
+                // Multiset automatically sorts any overlapping nodes (even if there are 6 of them!)
+                current_row_staging[col].insert(node->val);
+                
+                if (node->left) q.push({node->left, col - 1});
+                if (node->right) q.push({node->right, col + 1});
+            }
+            
+            // 2. The row is finished. Append the sorted staging area to the final blueprint.
+            for (auto& [col, sorted_values] : current_row_staging) {
+                for (int val : sorted_values) {
+                    columns[col].push_back(val);
+                }
+            }
+        }
+        
+        // Format the final output
+        vector<vector<int>> result;
+        for (auto& [col, values] : columns) {
+            result.push_back(values);
+        }
+        
+        return result;
+    }
+};
+
 
 // Definition for a binary tree node.
 struct TreeNode {
@@ -24,7 +118,7 @@ private:
 
 public:
     // =========================================================================
-    // 1. BFS Coordinate Assignment + Tuple Sorting
+    // 3. BFS Coordinate Assignment + Tuple Sorting
     // Time Complexity: O(N log N)
     // Space Complexity: O(N)
     // =========================================================================
