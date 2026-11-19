@@ -2,26 +2,38 @@
 using namespace std;
 
 int solve(unordered_map<long long, int>& pmap, long long currSum, long long targetSum, TreeNode* node) {
-    if (!node) return 0;
+ 
+    TreeNode* curr = root;
 
-    currSum += node->val;
-    long long need = currSum - targetSum;
+    vector<int>inorder;
 
-    // Check how many valid paths end at this current node
-    int ways = pmap[need];
+    while(curr != nullptr){
+        if(curr -> left == nullptr){
+            inorder.push_back(curr);
+            curr = curr->right;
+        }
+        else{
 
-    // Add current sum to the prefix map
-    pmap[currSum] += 1;
+            TreeNode* rightMost = curr->left;
 
-    // Pass 'pmap' into the recursive calls!
-    ways += solve(pmap, currSum, targetSum, node->left);
-    ways += solve(pmap, currSum, targetSum, node->right);
-        
-    // Backtrack
-    pmap[currSum] -= 1;
-    if(pmap[currSum] <= 0) pmap.erase(currSum); // memory optimization
+            while(rightMost->right != nullptr && rightMost->right != curr){
+                rightMost = rightMost -> right;
+            }
 
-    return ways;
+            if(rightMost->right == nullptr){
+                // make a link
+                rightMost->right = curr;
+                curr = curr->left;
+            }
+            else{
+                // 2nd visit
+                rightMost->right = nullptr;
+                curr = curr->right;
+            }
+        }
+    }
+
+
 }
 
 

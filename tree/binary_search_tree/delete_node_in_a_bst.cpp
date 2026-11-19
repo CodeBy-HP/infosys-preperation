@@ -12,6 +12,55 @@ struct TreeNode {
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
 };
 
+// Brute Force
+class Solution {
+    // Takes the node to delete and returns the root of the merged replacement subtree
+    TreeNode* deleteTargetNode(TreeNode* toDelete) {
+        if (!toDelete->left) return toDelete->right;
+        if (!toDelete->right) return toDelete->left;
+
+        // Both children exist: attach toDelete->left to the leftmost node of toDelete->right
+        TreeNode* leftMost = toDelete->right;
+        while (leftMost->left != nullptr) {
+            leftMost = leftMost->left;
+        }
+        leftMost->left = toDelete->left;
+
+        return toDelete->right;
+    }
+
+public:
+    // Time Complexity: O(H) - O(log N) balanced, O(N) skewed
+    // Space Complexity: O(1) - iterative, no recursion stack
+    TreeNode* deleteNode(TreeNode* root, int key) {
+        if (!root) return nullptr;
+
+        // Edge case: root itself is the target (no parent exists)
+        if (root->val == key) {
+            return deleteTargetNode(root);
+        }
+
+        TreeNode* curr = root;
+        while (curr != nullptr) {
+            if (key < curr->val) {
+                if (curr->left && curr->left->val == key) {
+                    curr->left = deleteTargetNode(curr->left);
+                    break;
+                }
+                curr = curr->left;
+            } else {
+                if (curr->right && curr->right->val == key) {
+                    curr->right = deleteTargetNode(curr->right);
+                    break;
+                }
+                curr = curr->right;
+            }
+        }
+
+        return root;
+    }
+};
+
 class DeleteNodeInBST {
 private:
     TreeNode* getMin(TreeNode* node) {

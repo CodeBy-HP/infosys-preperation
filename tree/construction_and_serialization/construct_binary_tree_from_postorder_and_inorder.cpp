@@ -10,6 +10,46 @@ struct TreeNode {
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
 };
 
+// Similar to PreOrder + Inorder type hash map approach
+class Solution {
+    int postIndex;
+    unordered_map<int, int> inorderMap;
+
+    TreeNode* build(const vector<int>& postorder, int inStart, int inEnd) {
+        if (inStart > inEnd) return nullptr;
+
+        int rootVal = postorder[postIndex--];
+        TreeNode* root = new TreeNode(rootVal);
+
+        int inIndex = inorderMap[rootVal];
+
+        // Right subtree MUST be constructed before left
+        // (Reversed Postorder property: Root, Right, Left)
+        root->right = build(postorder, inIndex + 1, inEnd);
+        root->left = build(postorder, inStart, inIndex - 1);
+
+        return root;
+    }
+
+public:
+    // =========================================================================
+    // Hash Map Partitioning Approach (Inorder + Postorder)
+    // Time Complexity: O(N)
+    // Space Complexity: O(N) for hash map + call stack
+    // =========================================================================
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+        postIndex = (int)postorder.size() - 1;
+        inorderMap.clear();
+        for (int i = 0; i < (int)inorder.size(); i++) {
+            inorderMap[inorder[i]] = i;
+        }
+        return build(postorder, 0, (int)inorder.size() - 1);
+    }
+};
+
+
+
+// Another approach
 TreeNode* buildTreeHelper(const std::vector<int>& inorder, int inStart, int inEnd,
                           const std::vector<int>& postorder, int postStart, int postEnd,
                           const std::unordered_map<int, int>& inMap) {

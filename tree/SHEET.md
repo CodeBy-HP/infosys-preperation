@@ -94,6 +94,7 @@ Mastering trees requires internalizing the fundamental **recursion and traversal
 
 * **[Morris Inorder Traversal](morris_traversal/morris_inorder_traversal.md)** ([C++ Code](morris_traversal/morris_inorder_traversal.cpp)): Establishing temporary predecessor threads and visiting nodes during thread removal ($\text{Left} \to \text{Root} \to \text{Right}$).
 * **[Morris Preorder Traversal](morris_traversal/morris_preorder_traversal.md)** ([C++ Code](morris_traversal/morris_preorder_traversal.cpp)): Visiting root nodes at thread creation before diving left ($\text{Root} \to \text{Left} \to \text{Right}$) in $O(1)$ space.
+* **[Morris Postorder Traversal](morris_traversal/morris_postorder_traversal.md)** ([C++ Code](morris_traversal/morris_postorder_traversal.cpp))
 
 ---
 
