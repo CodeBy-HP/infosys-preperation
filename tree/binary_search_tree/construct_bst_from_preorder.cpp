@@ -10,6 +10,36 @@ struct TreeNode {
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
 };
 
+
+// Tracking with [minValue,maxValue]
+class Solution {
+    int i = 0;
+
+    TreeNode* build(vector<int>& preorder, long minVal, long maxVal) {
+        // Stop if we used all elements OR current element doesn't fit in this subtree's range
+        if (i == preorder.size() || preorder[i] < minVal || preorder[i] > maxVal) {
+            return nullptr;
+        }
+
+        int val = preorder[i++];
+        TreeNode* root = new TreeNode(val);
+
+        // Left child must be strictly smaller than val
+        root->left = build(preorder, minVal, (long)val - 1);
+
+        // Right child must be strictly greater than val
+        root->right = build(preorder, (long)val + 1, maxVal);
+
+        return root;
+    }
+
+public:
+    TreeNode* bstFromPreorder(vector<int>& preorder) {
+        i = 0;
+        return build(preorder, LONG_MIN, LONG_MAX);
+    }
+};
+
 // Optimal O(N) single-pass with upper bound
 TreeNode* buildHelper(const std::vector<int>& preorder, int& idx, int bound) {
     if (idx == (int)preorder.size() || preorder[idx] > bound) {
