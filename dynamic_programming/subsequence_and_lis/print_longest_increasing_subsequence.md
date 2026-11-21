@@ -6,6 +6,8 @@ Given an array `arr` of $N$ integers, find the length of the Longest Increasing 
 
 If there are multiple valid subsequences with the maximum length, returning **any of them** is acceptable.
 
+![alt text](print_longest_increasing_subsequence.png)
+
 ---
 
 ## Examples
