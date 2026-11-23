@@ -1,9 +1,98 @@
+
 # Task Scheduler (LeetCode 621)
 
 ## Problem Overview
-Given a characters array `tasks`, representing the tasks a CPU needs to do, where each letter represents a different task. Tasks could be done in any order. Each task is done in one unit of time. For each unit of time, the CPU could complete either one task or just be idle.
-However, there is a non-negative integer `n` that represents the **cooldown period** between two same tasks (i.e. if task `A` is done at time `t`, task `A` cannot be done until time `t + n + 1`).
-Return the **least number of units of times** that the CPU will take to finish all the given tasks.
+
+Given a characters array `tasks`, representing the tasks a CPU needs to do, where each letter represents a different task.
+
+Tasks can be executed in any order. Each task takes **one unit of time**. For each unit of time, the CPU can either:
+
+- Execute one task.
+- Remain idle.
+
+However, there is a non-negative integer `n` representing the **cooldown period** between two executions of the same task.
+
+For example, if task `A` is executed at time `t`, it cannot be executed again until time `t + n + 1`.
+
+Return the **minimum number of time units** required for the CPU to finish all the given tasks.
+
+---
+
+## Examples
+
+### Example 1
+
+**Input:**
+```python
+tasks = ["A", "A", "A", "B", "B", "B"]
+n = 2
+```
+
+**Output:**
+```python
+8
+```
+
+**Explanation:**
+
+A possible execution sequence is:
+
+`A -> B -> idle -> A -> B -> idle -> A -> B`
+
+After completing task A, you must wait two intervals before executing A again. The same applies to task B.
+
+In the third interval, neither A nor B can be executed, so the CPU remains idle. By the fourth interval, A can be executed again.
+
+### Example 2
+
+**Input:**
+```python
+tasks = ["A", "C", "A", "B", "D", "B"]
+n = 1
+```
+
+**Output:**
+```python
+6
+```
+
+**Explanation:**
+
+A possible execution sequence is:
+
+`A -> B -> C -> D -> A -> B`
+
+With a cooldown period of 1, a task can be repeated after just one other task.
+
+### Example 3
+
+**Input:**
+```python
+tasks = ["A", "A", "A", "B", "B", "B"]
+n = 3
+```
+
+**Output:**
+```python
+10
+```
+
+**Explanation:**
+
+A possible execution sequence is:
+
+`A -> B -> idle -> idle -> A -> B -> idle -> idle -> A -> B`
+
+There are only two types of tasks, A and B, which need to be separated by 3 intervals. This leads to two idle intervals between repetitions of these tasks.
+
+---
+
+## Constraints
+
+- `1 <= tasks.length <= 10^4`
+- `tasks[i]` is an uppercase English letter.
+- `0 <= n <= 100`
+
 
 ---
 

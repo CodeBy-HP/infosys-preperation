@@ -6,35 +6,44 @@
 
 class HandOfStraights {
 public:
-    static bool isNStraightHand(const std::vector<int>& hand, int groupSize) {
-        if (hand.size() % groupSize != 0) return false;
+    bool isNStraightHand(vector<int>& hand, int groupSize) {
+        int n = hand.size();
+        if (n % groupSize != 0) return false;
 
-        std::unordered_map<int, int> count;
-        for (int card : hand) {
-            count[card]++;
+        unordered_map<int, int> freq;
+        for (int card : hand) freq[card]++;
+
+        // Min-Heap of {cardValue, count}
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+        for (auto& [val, cnt] : freq) {
+            pq.push({val, cnt});
         }
 
-        std::priority_queue<int, std::vector<int>, std::greater<int>> minHeap;
-        for (const auto& [card, _] : count) {
-            minHeap.push(card);
-        }
+        int m = n / groupSize;
+        while (m--) {
+            vector<pair<int, int>> temp;
+            int prev = -1;
 
-        while (!minHeap.empty()) {
-            int start = minHeap.top();
-            minHeap.pop();
+            for (int i = 0; i < groupSize; i++) {
+                if (pq.empty()) return false;
 
-            if (count[start] == 0) continue;
+                auto [val, cnt] = pq.top();
+                pq.pop();
 
-            int freq = count[start];
-            for (int i = 0; i < groupSize; ++i) {
-                int card = start + i;
-                if (count[card] < freq) {
-                    return false;
+                if (i > 0 && val != prev + 1) return false;
+                prev = val;
+
+                if (cnt > 1) {
+                    temp.push_back({val, cnt - 1});
                 }
-                count[card] -= freq;
+            }
+
+            for (auto& p : temp) {
+                pq.push(p);
             }
         }
-        return true;
+
+        return pq.empty();
     }
 };
 

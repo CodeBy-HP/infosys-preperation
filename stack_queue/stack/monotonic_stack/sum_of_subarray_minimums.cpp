@@ -59,22 +59,36 @@ public:
     // =========================================================================
     int sumSubarrayMinsSinglePass(const vector<int>& arr) {
         int n = arr.size();
-        stack<int> st;
-        long long total = 0;
+        const int MOD = 1e9 + 7;
+        stack<int> st; // Monotonic INCREASING stack storing indices
+        long long totalSum = 0;
 
         for (int i = 0; i <= n; i++) {
-            while (!st.empty() && (i == n || arr[st.top()] >= arr[i])) {
+            // Use INT_MIN at i == n to flush out all remaining elements
+            int currVal = (i == n) ? INT_MIN : arr[i];
+
+            // Asymmetric '>=' prevents double-counting duplicate minimums
+            while (!st.empty() && arr[st.top()] >= currVal) {
                 int mid = st.top();
                 st.pop();
-                long long left = mid - (st.empty() ? -1 : st.top());
-                long long right = i - mid;
-                long long ways = (left * right) % MOD;
-                total = (total + ways * arr[mid]) % MOD;
+
+                int leftBoundary = st.empty() ? -1 : st.top();
+                int rightBoundary = i;
+
+                long long leftCount = mid - leftBoundary;
+                long long rightCount = rightBoundary - mid;
+
+                // Multiply left choices * right choices * element value
+                long long contribution = (leftCount * rightCount) % MOD;
+                contribution = (contribution * arr[mid]) % MOD;
+
+                totalSum = (totalSum + contribution) % MOD;
             }
+
             st.push(i);
         }
 
-        return total;
+        return totalSum;
     }
 };
 

@@ -1,3 +1,41 @@
+
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+
+// Ordered set of pairs {value, index} to handle duplicates cleanly
+typedef tree<pair<int, int>, null_type, less<pair<int, int>>, rb_tree_tag,
+             tree_order_statistics_node_update> ordered_set;
+
+vector<int> countGreaterToRight(vector<int>& arr, vector<int>& indices) {
+    int n = arr.size();
+    vector<int> greaterCount(n, 0);
+    ordered_set os;
+
+    // Traverse from right to left (your exact idea!)
+    for (int i = n - 1; i >= 0; i--) {
+        // order_of_key({arr[i] + 1, -1}) counts all elements <= arr[i]
+        int countLessOrEqual = os.order_of_key({arr[i] + 1, -1});
+        
+        // Strictly greater = total elements to the right - elements <= arr[i]
+        greaterCount[i] = os.size() - countLessOrEqual;
+
+        // Insert current element into the sorted tree in O(log N)
+        os.insert({arr[i], i});
+    }
+
+    // Answer all Q queries in O(1) each
+    vector<int> ans;
+    ans.reserve(indices.size());
+    for (int idx : indices) {
+        ans.push_back(greaterCount[idx]);
+    }
+    return ans;
+}
+
+
+
+
 #include <iostream>
 #include <vector>
 #include <algorithm>

@@ -10,10 +10,11 @@ Given an array of integers `heights` representing the histogram's bar height whe
 
 ### Example 1
 ```text
-      6
-    5 #
-    # #   3
-  2 # # 2 #
+      #
+    # #
+    # #
+    # #   #
+#   # # # #
 # # # # # #
 2 1 5 6 2 3
 ```

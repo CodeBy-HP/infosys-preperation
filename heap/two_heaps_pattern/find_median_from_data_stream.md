@@ -1,10 +1,73 @@
+
 # Find Median from Data Stream (LeetCode 295)
 
 ## Problem Overview
-The median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value, and the median is the mean of the two middle values.
-Design a data structure that supports the following two operations:
-- `void addNum(int num)`: Adds an integer `num` from the data stream to the data structure.
-- `double findMedian()`: Returns the median of all elements so far.
+
+The **median** is the middle value in an ordered integer list.
+
+- If the list contains an odd number of elements, the median is the middle element.
+- If the list contains an even number of elements, the median is the average of the two middle elements.
+
+**Examples:**
+
+For `arr = [2, 3, 4]`, the median is `3`.
+
+For `arr = [2, 3]`, the median is `(2 + 3) / 2 = 2.5`.
+
+Implement the `MedianFinder` class with the following operations:
+
+- `MedianFinder()`: Initializes the `MedianFinder` object.
+- `void addNum(int num)`: Adds the integer `num` from the data stream to the data structure.
+- `double findMedian()`: Returns the median of all elements added so far.
+
+Answers within `10^-5` of the actual answer will be accepted.
+
+---
+
+## Example 1
+
+**Input:**
+
+```python
+["MedianFinder", "addNum", "addNum", "findMedian", "addNum", "findMedian"]
+[[], [1], [2], [], [3], []]
+```
+
+**Output:**
+
+```python
+[null, null, null, 1.5, null, 2.0]
+```
+
+**Explanation:**
+
+```python
+MedianFinder medianFinder = new MedianFinder();
+
+medianFinder.addNum(1)      # arr = [1]
+medianFinder.addNum(2)      # arr = [1, 2]
+medianFinder.findMedian()   # returns 1.5 (i.e., (1 + 2) / 2)
+
+medianFinder.addNum(3)      # arr = [1, 2, 3]
+medianFinder.findMedian()   # returns 2.0
+```
+
+---
+
+## Constraints
+
+- `-10^5 <= num <= 10^5`
+- There will be at least one element in the data structure before calling `findMedian`.
+- At most `5 * 10^4` calls will be made to `addNum` and `findMedian`.
+
+---
+
+## Follow-up Questions
+
+1. If all integer numbers from the stream are in the range `[0, 100]`, how would you optimize your solution?
+
+2. If 99% of all integer numbers from the stream are in the range `[0, 100]`, how would you optimize your solution?
+
 
 ---
 

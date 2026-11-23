@@ -1,8 +1,65 @@
+
 # Hand of Straights (LeetCode 846)
 
 ## Problem Overview
-Alice has some number of cards and she wants to rearrange the cards into groups so that each group is of size `groupSize`, and consists of `groupSize` consecutive cards.
-Given an integer array `hand` where `hand[i]` is the value written on the $i^{\text{th}}$ card and an integer `groupSize`, return `true` if she can rearrange the cards, or `false` otherwise.
+
+Alice has some number of cards and wants to rearrange them into groups such that:
+
+- Each group contains exactly `groupSize` cards.
+- Each group consists of `groupSize` consecutive card values.
+
+Given an integer array `hand`, where `hand[i]` represents the value written on the ith card, and an integer `groupSize`, return `true` if Alice can rearrange all the cards into valid groups, or `false` otherwise.
+
+---
+
+## Examples
+
+### Example 1
+
+**Input:**
+```python
+hand = [1, 2, 3, 6, 2, 3, 4, 7, 8]
+groupSize = 3
+```
+
+**Output:**
+```python
+true
+```
+
+**Explanation:**
+
+Alice's hand can be rearranged into the following groups:
+
+`[1, 2, 3], [2, 3, 4], [6, 7, 8]`
+
+Each group contains exactly 3 consecutive cards.
+
+### Example 2
+
+**Input:**
+```python
+hand = [1, 2, 3, 4, 5]
+groupSize = 4
+```
+
+**Output:**
+```python
+false
+```
+
+**Explanation:**
+
+Alice cannot rearrange all the cards into groups of 4 consecutive cards.
+
+---
+
+## Constraints
+
+- `1 <= hand.length <= 10^4`
+- `0 <= hand[i] <= 10^9`
+- `1 <= groupSize <= hand.length`
+
 
 ---
 
