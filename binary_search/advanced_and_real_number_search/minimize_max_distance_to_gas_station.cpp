@@ -16,6 +16,8 @@ private:
     }
 
 public:
+
+// safer approach
     double minmaxGasDist(const std::vector<int>& stations, int k) {
         double left = 0.0;
         double right = stations.back() - stations.front();
@@ -33,6 +35,29 @@ public:
         return left;
     }
 };
+
+// case cause infinite loop in some questions
+    double minmaxGasDist(vector<int>& stations, int k) {
+            double low = 0.0, high = 0.0;
+            for (int i = 1; i < stations.size(); i++) {
+                high = max(high, (double)(stations[i] - stations[i - 1]));
+            }
+
+            double ans = high;
+
+            while (high - low > 1e-7) {
+                double mid = low + (high - low) / 2.0;
+
+                if (canAchieve(stations, k, mid)) {
+                    ans = mid;  // Valid -> try an even smaller max distance
+                    high = mid;
+                } else {
+                    low = mid;  // Needs more than k stations -> increase max distance
+                }
+            }
+
+            return ans;
+        }
 
 int main() {
     Solution sol;

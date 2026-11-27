@@ -57,6 +57,36 @@ public:
     }
 };
 
+
+// stack approach
+Node* flatten(Node* root) {
+    if (!root) return nullptr;
+
+    Node* dummy = new Node(0);
+    Node* back = dummy;
+    stack<Node*> st;
+    st.push(root);
+
+    while (!st.empty()) {
+        Node* curr = st.top();
+        st.pop();
+
+        back->next = curr;
+        curr->prev = back;
+        back = curr;
+
+        if (curr->next) st.push(curr->next);
+        if (curr->child) st.push(curr->child);
+
+        back->child = nullptr;
+    }
+
+    Node* ans = dummy->next;
+    ans->prev = nullptr; // Crucial: detach from dummy!
+    delete dummy;
+    return ans;
+}
+
 void printDoublyList(Node* head) {
     Node* curr = head;
     while (curr) {

@@ -1,45 +1,29 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-int solve(unordered_map<long long, int>& pmap, long long currSum, long long targetSum, TreeNode* node) {
- 
-    TreeNode* curr = root;
+const long long MOD = 1e9 + 7;
 
-    vector<int>inorder;
-
-    while(curr != nullptr){
-        if(curr -> left == nullptr){
-            inorder.push_back(curr);
-            curr = curr->right;
-        }
-        else{
-
-            TreeNode* rightMost = curr->left;
-
-            while(rightMost->right != nullptr && rightMost->right != curr){
-                rightMost = rightMost -> right;
-            }
-
-            if(rightMost->right == nullptr){
-                // make a link
-                rightMost->right = curr;
-                curr = curr->left;
-            }
-            else{
-                // 2nd visit
-                rightMost->right = nullptr;
-                curr = curr->right;
-            }
-        }
+int helper(int n, vector<int>&nums,int ind,int curr,int target,vector<vector<int>>&dp){
+    // base case
+    if(ind == n){
+        if(curr == target)
+            return 1;
+        return 0;
     }
 
+    if(dp[ind][curr+1000] != -1) return dp[ind][curr+1000];
 
+    return dp[ind][curr+1000] = helper(n,nums,ind+1,curr+nums[ind],target) + helper(n,nums,ind+1,curr-nums[ind],target);
+}
+
+int count_ways(vector<int>&nums, int target){
+    int n = nums.size();
+    vector<vector<int>>dp(n,vector<int>(2002,-1));
+    return  helper(n,nums,0,0,target,dp);
 }
 
 
 int main(){
-
-
 }
 
 

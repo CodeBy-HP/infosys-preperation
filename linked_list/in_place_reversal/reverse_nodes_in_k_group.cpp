@@ -29,35 +29,36 @@ public:
     // Space Complexity: O(1)
     // =========================================================================
     ListNode* reverseKGroup(ListNode* head, int k) {
-        if (!head || k <= 1) return head;
+        if (!head || k == 1) return head;
 
-        ListNode dummy(0);
-        dummy.next = head;
-        ListNode* groupPrev = &dummy;
+        ListNode* dummy = new ListNode(0);
+        dummy->next = head;
+        ListNode* prev = dummy;
 
         while (true) {
-            ListNode* kth = getKthNode(groupPrev, k);
-            if (!kth) break; // Remaining nodes < k, leave intact
-
-            ListNode* groupNext = kth->next;
-
-            // In-place reversal of the k-element sublist
-            ListNode* prev = groupNext;
-            ListNode* curr = groupPrev->next;
-            while (curr != groupNext) {
-                ListNode* nextNode = curr->next;
-                curr->next = prev;
-                prev = curr;
-                curr = nextNode;
+            // 1. Check if at least k nodes remain ahead of prev
+            ListNode* check = prev;
+            for (int i = 0; i < k; ++i) {
+                check = check->next;
+                if (!check) {
+                    ListNode* ans = dummy->next;
+                    delete dummy;
+                    return ans;
+                }
             }
 
-            // Stitch group into the main list
-            ListNode* originalStart = groupPrev->next;
-            groupPrev->next = kth;
-            groupPrev = originalStart; // Old start is now group tail
-        }
+            // 2. Your exact 4-line head-insertion loop (k - 1 times)
+            ListNode* curr = prev->next;
+            for (int i = 0; i < k - 1; ++i) {
+                ListNode* nextNode = curr->next;
+                curr->next = nextNode->next;
+                nextNode->next = prev->next;
+                prev->next = nextNode;
+            }
 
-        return dummy.next;
+            // 3. Move prev to the tail of this group (which is curr!)
+            prev = curr;
+        }
     }
 };
 

@@ -39,15 +39,15 @@ public:
     // Space Complexity: O(1) auxiliary
     // =========================================================================
     ListNode* constructLLWithDummy(const vector<int>& arr) {
-        ListNode dummy(0);
-        ListNode* curr = &dummy;
+        ListNode* dummy = new ListNode(0);
+        ListNode* curr = dummy;
 
         for (int val : arr) {
             curr->next = new ListNode(val);
             curr = curr->next;
         }
 
-        return dummy.next;
+        return dummy->next;
     }
 
     // =========================================================================

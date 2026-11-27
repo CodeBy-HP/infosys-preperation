@@ -3,24 +3,27 @@
 
 class Solution {
 public:
-    std::vector<int> findClosestElements(const std::vector<int>& arr, int k, int x) {
-        int left = 0;
-        int right = (int)arr.size() - k;
+    vector<int> findClosestElements(vector<int>& arr, int k, int x) {
+        int n = arr.size();
+        int low = 0, high = n - k - 1;
+        int ans = n - k; // Default: rightmost possible window [n - k .. n - 1]
 
-        // Binary search for the starting index of the k-length window
-        while (left < right) {
-            int mid = left + (right - left) / 2;
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+
+            // Compare left edge arr[mid] vs next right element arr[mid + k]
+            // Signed diff (no abs) handles duplicates safely
             if (x - arr[mid] > arr[mid + k] - x) {
-                left = mid + 1; // arr[mid + k] is closer than arr[mid]
+                low = mid + 1;  // Shifting right gets closer to x
             } else {
-                right = mid;
+                ans = mid;      // mid beats or ties mid + 1 -> save and search left
+                high = mid - 1;
             }
         }
 
-        return std::vector<int>(arr.begin() + left, arr.begin() + left + k);
+        return vector<int>(arr.begin() + ans, arr.begin() + ans + k);
     }
 };
-
 int main() {
     Solution sol;
     std::vector<int> arr = {1, 2, 3, 4, 5};
