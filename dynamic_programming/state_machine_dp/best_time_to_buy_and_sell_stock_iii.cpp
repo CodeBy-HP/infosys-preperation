@@ -48,6 +48,7 @@ public:
     }
     
     // Approach 2: State Machine with 4 variables (O(1) space)
+    // The Relay Race
     int maxProfitOptimized(vector<int>& prices) {
         int firstBuy = INT_MIN, firstSell = 0;
         int secondBuy = INT_MIN, secondSell = 0;

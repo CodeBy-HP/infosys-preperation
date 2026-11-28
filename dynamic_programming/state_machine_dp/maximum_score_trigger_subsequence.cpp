@@ -4,6 +4,29 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
+// Recursive -> call solve(0, 0, k, nums, dp) dp is initialized to size n by k + 1 filled with LLONG_MIN.
+long long solve(int ind, int state, int k, vector<int>& nums, vector<vector<long long>>& dp) {
+    if (ind == nums.size()) return 0;
+    if (dp[ind][state] != LLONG_MIN) return dp[ind][state];
+
+    // Take
+    long long gain = nums[ind];
+    int next_state;
+    if (state == k) {
+        gain *= 2;       // Immediately after a trigger checkpoint
+        next_state = 1;  // Start of next cycle
+    } else {
+        next_state = state + 1;
+    }
+    long long take = gain + solve(ind + 1, next_state, k, nums, dp);
+
+    // Not take
+    long long not_take = solve(ind + 1, state, k, nums, dp);
+
+    return dp[ind][state] = max(take, not_take);
+}
+
 class Solution {
 public:
     // Approach 1: Recursive DP with Memoization

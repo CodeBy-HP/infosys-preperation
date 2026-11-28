@@ -303,3 +303,9 @@ std::priority_queue<ListNode*, std::vector<ListNode*>, CompareList> pq;
 #### Pointer Comparator Watch-Outs
 * **Never insert `nullptr`:** Your comparator dereferences `a->val` and `b->val`. Always check `if (node != nullptr)` before inserting, or you will get a segmentation fault.
 * **Never mutate `node->val` while stored:** Changing a node's value while it is inside a `set`, `map`, or `priority_queue` corrupts the container's ordering. Erase it first, update `val`, then re-insert it.
+
+
+### Fermet Little Theorem
+
+Whenever you need to divide by b under MOD = 1e9 + 7, never write / b. Replace it with * modPow(b, MOD - 2) % MOD.
+

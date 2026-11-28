@@ -3,24 +3,28 @@ using namespace std;
 
 const long long MOD = 1e9 + 7;
 
-int helper(int n, vector<int>&nums,int ind,int curr,int target,vector<vector<int>>&dp){
+int helper(int ind,bool isSold,vector<int>&prices){
     // base case
     if(ind == n){
-        if(curr == target)
-            return 1;
         return 0;
     }
 
-    if(dp[ind][curr+1000] != -1) return dp[ind][curr+1000];
+    // do nothing
+    int pocket = helper(ind+1,isSold);
+    // buy 
+    if(isSold){
+        pocket = max(pocket,-prices[ind] + helper(ind+1,!isSold));
+    }
 
-    return dp[ind][curr+1000] = helper(n,nums,ind+1,curr+nums[ind],target) + helper(n,nums,ind+1,curr-nums[ind],target);
+    // sell
+    else{
+        pocket = max(pocket,prices[ind] + helper(ind+1,!isSold));
+    }
+
+    return max(pocket,0);
 }
 
-int count_ways(vector<int>&nums, int target){
-    int n = nums.size();
-    vector<vector<int>>dp(n,vector<int>(2002,-1));
-    return  helper(n,nums,0,0,target,dp);
-}
+
 
 
 int main(){
